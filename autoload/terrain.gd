@@ -61,7 +61,7 @@ var NODE_TYPES: Dictionary = {
 }
 
 func clampf(v: float, lo: float, hi: float) -> float:
-	return mini(maxi(v, lo), hi)
+	return minf(maxf(v, lo), hi)
 
 func _si32(v: int) -> int:
 	v = v & 0xFFFFFFFF
@@ -69,8 +69,8 @@ func _si32(v: int) -> int:
 		v -= 0x100000000
 	return v
 
-func hash2(x: int, y: int, seed: int) -> float:
-	var n: int = x * 374761393 + y * 668265263 + seed * 974521
+func hash2(x: int, y: int, seedv: int) -> float:
+	var n: int = x * 374761393 + y * 668265263 + seedv * 974521
 	n = _si32(n)
 	# JS multiplies in IEEE double (result overflows 2^53) then truncates.
 	n = _si32(int(float(_si32(n ^ (_si32(n) >> 13))) * 1274126177.0))
@@ -81,26 +81,26 @@ func hash2(x: int, y: int, seed: int) -> float:
 func smooth(t: float) -> float:
 	return t * t * (3.0 - 2.0 * t)
 
-func value_noise2(x: float, y: float, seed: int) -> float:
+func value_noise2(x: float, y: float, seedv: int) -> float:
 	var xi: int = int(floor(x))
 	var yi: int = int(floor(y))
 	var xf: float = x - xi
 	var yf: float = y - yi
-	var v00 := hash2(xi, yi, seed)
-	var v10 := hash2(xi + 1, yi, seed)
-	var v01 := hash2(xi, yi + 1, seed)
-	var v11 := hash2(xi + 1, yi + 1, seed)
+	var v00 := hash2(xi, yi, seedv)
+	var v10 := hash2(xi + 1, yi, seedv)
+	var v01 := hash2(xi, yi + 1, seedv)
+	var v11 := hash2(xi + 1, yi + 1, seedv)
 	var u := smooth(xf)
 	var v := smooth(yf)
 	return (v00 * (1.0 - u) + v10 * u) * (1.0 - v) + (v01 * (1.0 - u) + v11 * u) * v
 
-func fractal_noise(x: float, y: float, seed: int, octaves: int, persistence: float) -> float:
+func fractal_noise(x: float, y: float, seedv: int, octaves: int, persistence: float) -> float:
 	var total := 0.0
 	var amp := 1.0
 	var freq := 1.0
 	var max_amp := 0.0
 	for i in octaves:
-		total += value_noise2(x * freq, y * freq, seed + i * 101) * amp
+		total += value_noise2(x * freq, y * freq, seedv + i * 101) * amp
 		max_amp += amp
 		amp *= persistence
 		freq *= 2.05

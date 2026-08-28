@@ -32,7 +32,6 @@ var _center_box: PanelContainer
 var _center_title: Label
 var _center_sub: Label
 var _center_hint: Label
-var _center_clickable := true
 
 func _ready() -> void:
 	_build()
@@ -105,16 +104,16 @@ func _build() -> void:
 				menus.redeploy())
 
 func _make_cross() -> TextureRect:
-	var tr := TextureRect.new()
-	tr.anchor_left = 0.5
-	tr.anchor_right = 0.5
-	tr.anchor_top = 0.5
-	tr.anchor_bottom = 0.5
-	tr.offset_left = -7
-	tr.offset_right = 7
-	tr.offset_top = -7
-	tr.offset_bottom = 7
-	tr.modulate.a = 0.0
+	var tx := TextureRect.new()
+	tx.anchor_left = 0.5
+	tx.anchor_right = 0.5
+	tx.anchor_top = 0.5
+	tx.anchor_bottom = 0.5
+	tx.offset_left = -7
+	tx.offset_right = 7
+	tx.offset_top = -7
+	tx.offset_bottom = 7
+	tx.modulate.a = 0.0
 	var img := Image.create(14, 14, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	for i in 5:
@@ -122,8 +121,8 @@ func _make_cross() -> TextureRect:
 	img.set_pixel(7, 7, AMBER_BRIGHT)
 	for i in 5:
 		img.set_pixel(1 + i * 2, 7, AMBER_BRIGHT)
-	tr.texture = ImageTexture.create_from_image(img)
-	return tr
+	tx.texture = ImageTexture.create_from_image(img)
+	return tx
 
 func _make_reticle() -> Control:
 	var r := Control.new()
@@ -140,12 +139,12 @@ func _make_reticle() -> Control:
 	return r
 
 func _make_ring() -> TextureRect:
-	var tr := TextureRect.new()
-	tr.offset_left = -16
-	tr.offset_right = 16
-	tr.offset_top = -16
-	tr.offset_bottom = 16
-	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var tx := TextureRect.new()
+	tx.offset_left = -16
+	tx.offset_right = 16
+	tx.offset_top = -16
+	tx.offset_bottom = 16
+	tx.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	for y in 32:
@@ -153,8 +152,8 @@ func _make_ring() -> TextureRect:
 			var d := Vector2(x - 16, y - 16).length()
 			if d >= 12.0 and d <= 15.0:
 				img.set_pixel(x, y, Color(0xffe0a3, 0.8))
-	tr.texture = ImageTexture.create_from_image(img)
-	return tr
+	tx.texture = ImageTexture.create_from_image(img)
+	return tx
 
 func _draw_reticle(r: Control) -> void:
 	var c := Vector2(22, 22)

@@ -88,6 +88,9 @@ func _build() -> void:
 	vb.add_child(_body)
 	vb.add_child(_hint)
 	_panel.add_child(vb)
+	_panel.gui_input.connect(func(ev: InputEvent) -> void:
+		if visible and ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
+			advance())
 	add_child(_panel)
 	visible = false
 
@@ -152,6 +155,3 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.keycode == KEY_E or event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
 			advance()
 			get_viewport().set_input_as_handled()
-	elif event is InputEventMouseButton and event.pressed:
-		advance()
-		get_viewport().set_input_as_handled()

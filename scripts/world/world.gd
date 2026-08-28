@@ -72,7 +72,7 @@ func _build_terrain() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_smooth_group(-1)
-	var step := WORLD_SIZE / SEG
+	var step := WORLD_SIZE / float(SEG)
 	var half := WORLD_SIZE * 0.5
 	var n: int = SEG + 1
 	var h_arr := PackedFloat32Array()
@@ -475,7 +475,7 @@ func on_turret_impact(hit: Dictionary) -> void:
 	if fx:
 		fx.hit_marker()
 
-func _test_lattice(pos: Vector3, prev: Vector3) -> Dictionary:
+func _test_lattice(pos: Vector3, _prev: Vector3) -> Dictionary:
 	var best: Dictionary = { 'hit': false }
 	for z in boss_zones:
 		var m: Node = z.monolith
@@ -492,7 +492,7 @@ func _test_lattice(pos: Vector3, prev: Vector3) -> Dictionary:
 					best = { 'hit': true, 'monolith': m, 'point': m.to_global(center) }
 	return best
 
-func spawn_fragment_burst(center: Vector3, scale_base: float, count: int) -> void:
+func spawn_fragment_burst(center: Vector3, _scale_base: float, count: int) -> void:
 	for i in count:
 		var d := DEBRIS.new()
 		add_child(d)

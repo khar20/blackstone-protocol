@@ -11,11 +11,13 @@ static func _l(img: Image, p0: Vector2, p1: Vector2) -> void:
 	for i in steps + 1:
 		var t := float(i) / steps
 		var p := p0.lerp(p1, t)
-		img.set_pixel(p.x, p.y, AMBER)
-		if p.x + 1.0 < img.get_width():
-			img.set_pixel(p.x + 1.0, p.y, AMBER)
-		if p.y + 1.0 < img.get_height():
-			img.set_pixel(p.x, p.y + 1.0, AMBER)
+		var px := int(p.x)
+		var py := int(p.y)
+		img.set_pixel(px, py, AMBER)
+		if px + 1 < img.get_width():
+			img.set_pixel(px + 1, py, AMBER)
+		if py + 1 < img.get_height():
+			img.set_pixel(px, py + 1, AMBER)
 
 static func _poly(img: Image, pts: Array, closed: bool = false) -> void:
 	for i in pts.size() - 1:
@@ -29,7 +31,7 @@ static func _dot(img: Image, c: Vector2, r: float) -> void:
 			var off := Vector2(c.x - r + x, c.y - r + y)
 			if off.distance_to(c) <= r and off.x >= 0.0 and off.y >= 0.0 \
 					and off.x < img.get_width() and off.y < img.get_height():
-				img.set_pixel(off.x, off.y, AMBER)
+				img.set_pixel(int(off.x), int(off.y), AMBER)
 
 static func _icon(name: String) -> Image:
 	var size := 48 if name == 'emblem' else 24

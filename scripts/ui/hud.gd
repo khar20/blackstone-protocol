@@ -36,7 +36,6 @@ var _boss_code: Label
 var _boss_hp: TextureRect
 var _target_dot: TextureRect
 var _core_fill: TextureRect
-var _dist_marker: TextureRect
 var _mining_hint: Label
 
 func _ready() -> void:
@@ -51,16 +50,16 @@ func _build() -> void:
 	_add_zone()
 	_add_boss()
 
-func _panel(at_anchor: Vector2, offset: Vector2) -> PanelContainer:
+func _panel(at_anchor: Vector2, off: Vector2) -> PanelContainer:
 	var p := PanelContainer.new()
 	p.anchor_left = at_anchor.x
 	p.anchor_right = at_anchor.x
 	p.anchor_top = at_anchor.y
 	p.anchor_bottom = at_anchor.y
-	p.offset_left = offset.x
-	p.offset_right = offset.x + 210
-	p.offset_top = offset.y
-	p.offset_bottom = offset.y + 46
+	p.offset_left = off.x
+	p.offset_right = off.x + 210
+	p.offset_top = off.y
+	p.offset_bottom = off.y + 46
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0x120f0a, 0.6)
 	sb.border_color = Color(0xd9a05b, 0.4)
@@ -70,13 +69,13 @@ func _panel(at_anchor: Vector2, offset: Vector2) -> PanelContainer:
 	return p
 
 func _bar_texture() -> TextureRect:
-	var tr := TextureRect.new()
-	tr.custom_minimum_size = Vector2(150, 6)
-	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tr.stretch_mode = TextureRect.STRETCH_SCALE
-	tr.modulate = AMBER
-	tr.texture = _white()
-	return tr
+	var tx := TextureRect.new()
+	tx.custom_minimum_size = Vector2(150, 6)
+	tx.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tx.stretch_mode = TextureRect.STRETCH_SCALE
+	tx.modulate = AMBER
+	tx.texture = _white()
+	return tx
 
 func _white() -> Texture2D:
 	var img := Image.create(1, 1, false, Image.FORMAT_RGBA8)
@@ -109,7 +108,7 @@ func _add_cargo() -> void:
 	vb.add_child(res)
 	p.add_child(vb)
 
-func _res(out: Label, kind: String) -> Label:
+func _res(_out: Label, kind: String) -> Label:
 	return _label('0', 11, _kind_color(kind))
 
 func _kind_color(kind: String) -> Color:
@@ -117,7 +116,6 @@ func _kind_color(kind: String) -> Color:
 		'amber': return Color(0xffe0a3)
 		'obsidian': return Color(0xb0a8f0)
 		_: return Color(0x9fd0ff)
-	return AMBER
 
 func _label(text: String, size: int, col: Color) -> Label:
 	var l := Label.new()
@@ -399,8 +397,8 @@ func set_target_dot(state: String) -> void:
 		_:
 			_target_dot.modulate = Color(0x807866)
 
-func set_dock_prompt(show: bool) -> void:
-	_dock_prompt.visible = show
+func set_dock_prompt(vis: bool) -> void:
+	_dock_prompt.visible = vis
 
 func set_corridor_warning(active: bool, frac: float) -> void:
 	_zone_warning.visible = active

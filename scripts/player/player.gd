@@ -354,8 +354,8 @@ func _update_mining_fx(delta: float) -> void:
 		var to: Vector3 = _beam_target
 		_beam.global_position = from
 		_beam.look_at(to, Vector3.UP)
-		var len := from.distance_to(to)
-		_beam.scale = Vector3(1.0, 1.0, len)
+		var beam_len := from.distance_to(to)
+		_beam.scale = Vector3(1.0, 1.0, beam_len)
 		_beam_mat.albedo_color.a = 0.55
 	else:
 		_beam_mat.albedo_color.a = lerpf(_beam_mat.albedo_color.a, 0.0, delta * 8)
@@ -365,7 +365,7 @@ func _update_mining_fx(delta: float) -> void:
 func damage(amount: int) -> void:
 	if not alive or GAME.state != 'PLAYING':
 		return
-	GAME.hull = maxi(0, GAME.hull - amount)
+	GAME.hull = maxf(0, GAME.hull - float(amount))
 	if fx:
 		fx.flash()
 	if GAME.hull <= 0:

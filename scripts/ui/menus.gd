@@ -159,6 +159,7 @@ func show_initial() -> void:
 func _on_deploy() -> void:
 	SFX.ui_blip()
 	if dialogue:
+		_title.visible = false
 		dialogue.open(DIALOGUE_RES.INTRO_PAGES, begin_play)
 
 func begin_play() -> void:
