@@ -45,6 +45,8 @@ static var DELIVERY_PAGES: Array = [
 	]}
 ]
 
+const CRT_RES = preload("res://scripts/ui/crt_overlay.gd")
+
 var player: Node
 var _pages: Array = []
 var _page := 0
@@ -92,6 +94,7 @@ func _build() -> void:
 		if visible and ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
 			advance())
 	add_child(_panel)
+	CRT_RES.attach(_panel)
 	visible = false
 
 func open(pages: Array, on_close: Callable = Callable()) -> void:

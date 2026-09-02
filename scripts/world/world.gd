@@ -9,7 +9,6 @@ const OUTPOST = preload("res://scripts/world/outpost.gd")
 const MINING_NODE = preload("res://scripts/world/mining_node.gd")
 const BOSS_ZONE = preload("res://scripts/world/boss.gd")
 const PROJECTILE_MGR = preload("res://scripts/world/projectile_mgr.gd")
-const DEBRIS = preload("res://scripts/world/debris.gd")
 
 const WORLD_SIZE := 2600
 const SEG := 300
@@ -34,7 +33,6 @@ var projectile_mgr: Node
 var player: Node
 var fx: Node
 var hud: Node
-var camera: Node
 
 var _env: Environment
 var _sun: DirectionalLight3D
@@ -42,13 +40,11 @@ var _scar: MeshInstance3D
 var _scar_material: StandardMaterial3D
 var _scar_radius := 0.0
 var _scar_target := 0.0
-var _dust: GPUParticles3D
 
 func _ready() -> void:
 	_build_terrain()
 	_build_environment()
 	_build_scar()
-	_build_dust()
 	spawn_rocks()
 	_build_corridor()
 	spawn_outposts()
@@ -159,30 +155,6 @@ func _build_scar() -> void:
 	_scar.rotation.x = -PI / 2
 	_scar.position.y = 0.05
 	add_child(_scar)
-
-func _build_dust() -> void:
-	_dust = GPUParticles3D.new()
-	var pm := ParticleProcessMaterial.new()
-	pm.direction = Vector3(1, 0, 0.5)
-	pm.spread = 10.0
-	pm.initial_velocity_min = 1.5
-	pm.initial_velocity_max = 3.5
-	pm.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-	pm.emission_box_extents = Vector3(800, 16, 800)
-	var m := StandardMaterial3D.new()
-	m.albedo_color = Color(0xd9a05b)
-	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.albedo_color.a = 0.4
-	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	var mi := MeshInstance3D.new()
-	mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-0.2, -0.2, -0.2), 'max': Vector3(0.2, 0.2, 0.2), 'color': Color(0xd9a05b) }])
-	mi.mesh.surface_set_material(0, m)
-	_dust.process_material = pm
-	_dust.draw_pass_1 = mi.mesh
-	_dust.amount = 450
-	_dust.lifetime = 12.0
-	_dust.emitting = true
-	add_child(_dust)
 
 func spawn_rocks() -> void:
 	var rock_mat := StandardMaterial3D.new()
@@ -461,10 +433,9 @@ func on_shell_impact(hit: Dictionary) -> void:
 		'monolith':
 			hit['monolith'].handle_hit(hit['point'])
 			if fx:
-				fx.hit_marker()
+				fx.show_hitmarker()
 			SFX.impact()
 		_:
-			spawn_fragment_burst(hit['point'], 2.5 if hit.get('impact', false) else 2.0, 3)
 			SFX.impact()
 
 func turret_hit(pos: Vector3, prev: Vector3) -> Dictionary:
@@ -473,7 +444,7 @@ func turret_hit(pos: Vector3, prev: Vector3) -> Dictionary:
 func on_turret_impact(hit: Dictionary) -> void:
 	hit['monolith'].handle_hit(hit['point'])
 	if fx:
-		fx.hit_marker()
+		fx.show_hitmarker()
 
 func _test_lattice(pos: Vector3, _prev: Vector3) -> Dictionary:
 	var best: Dictionary = { 'hit': false }
@@ -491,24 +462,3 @@ func _test_lattice(pos: Vector3, _prev: Vector3) -> Dictionary:
 				if not best['hit'] or m.position.distance_to(pos) < 1.0:
 					best = { 'hit': true, 'monolith': m, 'point': m.to_global(center) }
 	return best
-
-func spawn_fragment_burst(center: Vector3, _scale_base: float, count: int) -> void:
-	for i in count:
-		var d := DEBRIS.new()
-		add_child(d)
-		d.init_debris(center + Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1)), Color(0xd9a05b), 0.6)
-
-func spawn_crystal_debris(world_center: Vector3, _half: Vector3, outward: Vector3) -> void:
-	var d := DEBRIS.new()
-	add_child(d)
-	d.init_debris(world_center, Color(0xcfc8b8), 0.8)
-	for b in d.get_children():
-		b.position += outward * 0.1
-	d.extra_velocity = outward
-
-func spawn_burst_crystal_debris(center: Vector3, count: int, power: float) -> void:
-	for i in count:
-		var d := DEBRIS.new()
-		add_child(d)
-		d.init_debris(center + Vector3(randf_range(-3, 3), randf_range(-5, 5), randf_range(-3, 3)), Color(0xcfc8b8), 1.2)
-		d.extra_velocity = Vector3(randf_range(-1, 1), randf(), randf_range(-1, 1)).normalized() * power

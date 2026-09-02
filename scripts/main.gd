@@ -12,7 +12,6 @@ const HUD = preload("res://scripts/ui/hud.gd")
 const DIALOGUE = preload("res://scripts/ui/dialogue.gd")
 const GARAGE = preload("res://scripts/ui/garage.gd")
 const MENUS = preload("res://scripts/ui/menus.gd")
-const CRT = preload("res://scripts/ui/crt_overlay.gd")
 
 var world: Node
 var player: Node
@@ -23,9 +22,6 @@ var hud: Node
 var dialogue: Node
 var garage: Node
 var menus: Node
-var crt: Node
-
-var _elapsed := 0.0
 
 func _ready() -> void:
 	world = WORLD.new()
@@ -46,8 +42,6 @@ func _ready() -> void:
 	add_child(menus)
 	dialogue = DIALOGUE.new()
 	add_child(dialogue)
-	crt = CRT.new()
-	add_child(crt)
 	_wire()
 
 	menus.show_initial()
@@ -56,7 +50,6 @@ func _wire() -> void:
 	world.player = player
 	world.fx = effects
 	world.hud = hud
-	world.camera = camera
 	player.world = world
 	player.camera = camera
 	player.fx = effects
@@ -64,7 +57,6 @@ func _wire() -> void:
 	player.garage = garage
 	camera.player = player
 	camera.world = world
-	camera.fx = effects
 	mission.player = player
 	mission.world = world
 	mission.hud = hud
@@ -72,8 +64,6 @@ func _wire() -> void:
 	mission.garage = garage
 	effects.player = player
 	effects.camera = camera
-	effects.world = world
-	effects.hud = hud
 	effects.dialogue = dialogue
 	effects.garage = garage
 	effects.menus = menus
@@ -84,7 +74,6 @@ func _wire() -> void:
 	garage.player = player
 	garage.hud = hud
 	garage.fx = effects
-	garage.dialogue = dialogue
 	garage.world = world
 	menus.player = player
 	menus.fx = effects
@@ -94,8 +83,7 @@ func _wire() -> void:
 	menus.world = world
 
 func _process(delta: float) -> void:
-	_elapsed += delta
 	if camera and player:
-		camera.update_camera(delta, _elapsed)
+		camera.update_camera(delta)
 	if mission:
 		mission.update(delta)

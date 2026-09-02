@@ -27,9 +27,6 @@ echo "== smoke test =="
 echo "== deploy flow test =="
 "$GODOT" --headless res://tests/deploy_flow_test.tscn 2>&1 | grep -Ev '^WARNING|^$|ObjectDB|PagedAllocator|Dummy|RID allocations|Dependency|Godot Engine' | tail -12
 
-echo "== world boot =="
-"$GODOT" --headless --script res://scripts/world/boot_world.gd 2>&1 | grep -Ev '^WARNING|^$|ObjectDB|PagedAllocator|Dummy|RID allocations|Dependency' | tail -12
-
 if [ -f scenes/main.tscn ]; then
   echo "== headless boot of main.tscn =="
   "$GODOT" --headless --quit-after 120 res://scenes/main.tscn 2>&1 | grep -Ev '^$' | tail -30

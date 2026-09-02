@@ -179,7 +179,6 @@ func _update_shards(dt: float, player_pos: Vector3) -> void:
 			SFX.shard_impact()
 			dead = true
 		elif mi.position.y <= TERRAIN.get_effective_ground_height(mi.position.x, mi.position.z):
-			world.spawn_fragment_burst(mi.position, 2.0, 3)
 			dead = true
 		elif s['life'] > 6.0:
 			dead = true
@@ -294,10 +293,6 @@ class Monolith:
 			var center: Vector3 = c['center']
 			if local.distance_to(center) < TERRAIN.BOSS['cellSize'] * 1.35:
 				c['alive'] = false
-				var wc := to_global(center)
-				var outward: Vector3 = (wc - position).normalized() * (5.0 + randf() * 4.0)
-				outward.y += 3.0
-				world.spawn_crystal_debris(wc, c['half'], outward)
 				shed += 1
 		if shed == 0:
 			return true
@@ -306,9 +301,6 @@ class Monolith:
 		return true
 
 	func collapse() -> void:
-		var top := position
-		top.y += TERRAIN.BOSS['grid']['y'] * TERRAIN.BOSS['cellSize'] * 0.5
-		world.spawn_burst_crystal_debris(top, 14, 8)
 		for c in cells:
 			c['alive'] = false
 		rebuild_mesh()

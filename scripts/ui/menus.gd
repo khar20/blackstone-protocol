@@ -7,6 +7,7 @@ extends CanvasLayer
 
 const ICONS_RES = preload("res://scripts/ui/icons.gd")
 const DIALOGUE_RES = preload("res://scripts/ui/dialogue.gd")
+const CRT_RES = preload("res://scripts/ui/crt_overlay.gd")
 
 var player: Node
 var fx: Node
@@ -27,6 +28,9 @@ func _build() -> void:
 	_title = _menu_screen(_assign_title_START)
 	_pause = _menu_screen(_assign_pause_START)
 	_controls = _controls_screen()
+	CRT_RES.attach(_title)
+	CRT_RES.attach(_pause)
+	CRT_RES.attach(_controls)
 	_show_game(bool(GAME.state == 'PLAYING'))
 
 func _menu_screen(content: Callable) -> PanelContainer:

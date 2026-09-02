@@ -7,6 +7,7 @@ extends CanvasLayer
 ## outpost terminal panel ...
 
 const ICONS_RES = preload("res://scripts/ui/icons.gd")
+const CRT_RES = preload("res://scripts/ui/crt_overlay.gd")
 
 var player: Node
 var hud: Node
@@ -54,6 +55,7 @@ func _build() -> void:
 	vb.add_child(scroll)
 	_panel.add_child(vb)
 	add_child(_panel)
+	CRT_RES.attach(_panel)
 	visible = false
 
 func open(_from_mission: bool = false) -> void:

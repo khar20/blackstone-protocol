@@ -11,8 +11,6 @@ const DIALOGUE_RES = preload("res://scripts/ui/dialogue.gd")
 
 var player: Node
 var camera: Camera3D
-var world: Node
-var hud: Node
 var dialogue: Node
 var garage: Node
 var menus: Node
@@ -216,28 +214,6 @@ func open_upgrades_dialogue() -> void:
 	if dialogue:
 		dialogue.open(DIALOGUE_RES.UPGRADE_PAGES, null)
 
-const SHELL_SPEED := 98.0
-const GRAVITY := 19.6
-
-func _ballistic_impact() -> Vector3:
-	if not player:
-		return Vector3.ZERO
-	var muzzle: Vector3 = player.tank.barrel_tip.global_position
-	var pos := muzzle
-	var vel: Vector3 = -player.tank.gun_pitch.global_transform.basis.z * SHELL_SPEED
-	var step := 1.0 / 30.0
-	for i in 165:
-		vel.y -= GRAVITY * step
-		vel += Vector3(0.5, 0.0, 0.2) * step
-		pos += vel * step
-		if pos.y <= TERRAIN.get_effective_ground_height(pos.x, pos.z):
-			break
-		if world:
-			var m: Dictionary = world.shell_hit(pos, pos - vel * step)
-			if m['hit']:
-				break
-	return pos
-
 func update(dt: float) -> void:
 	if _banner_timer > 0.0:
 		_banner_timer -= dt
@@ -255,14 +231,13 @@ func update(dt: float) -> void:
 			_hitmarker.modulate.a -= dt * 4.5
 			_hitmarker.modulate.a = maxf(0.0, _hitmarker.modulate.a)
 
-	if player and player.active_weapon == 'cannon':
-		var impact := _ballistic_impact()
-		if camera:
-			var pp: Vector2 = camera.unproject_position(impact)
-			_cannon_circle.position = pp - Vector2(16, 16)
-			var cam_dir: Vector3 = -camera.global_transform.basis.z
-			var to_impact := impact - camera.global_position
-			_cannon_circle.visible = to_impact.dot(cam_dir) > 0.0
+	if player and player.alive and GAME.state == 'PLAYING' and player.active_weapon == 'cannon' and camera:
+		var muzzle: Vector3 = player.tank.barrel_tip.global_position
+		var impact: Vector3 = muzzle + -player.tank.gun_pitch.global_transform.basis.z * 200.0
+		var pp: Vector2 = camera.unproject_position(impact)
+		_cannon_circle.position = pp - Vector2(16, 16)
+		var to_impact := impact - camera.global_position
+		_cannon_circle.visible = to_impact.dot(-camera.global_transform.basis.z) > 0.0
 	else:
 		_cannon_circle.visible = false
 
@@ -272,12 +247,17 @@ func set_reload(frac: float, in_sweet: bool) -> void:
 	_reticle.queue_redraw()
 
 func hide_reload() -> void:
+	if _reload_frac < 0.0:
+		return
 	_reload_frac = -1.0
 	_reticle.queue_redraw()
 
 func set_mining_arc(frac: float, active: bool) -> void:
-	_mining_frac = frac if active else 0.0
+	var f := frac if active else 0.0
+	if f == _mining_frac:
+		return
+	_mining_frac = f
 	_reticle.queue_redraw()
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
 	update(delta)

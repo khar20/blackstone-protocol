@@ -79,20 +79,6 @@ static func _icon(name: String) -> Image:
 			_poly(img, [Vector2(15, 3), Vector2(6, 3), Vector2(6, 21), Vector2(15, 21)])
 			_l(img, Vector2(11, 12), Vector2(21, 12))
 			_poly(img, [Vector2(17, 8), Vector2(21, 12), Vector2(17, 16)])
-		'play':
-			_poly(img, [Vector2(7, 4), Vector2(20, 12), Vector2(7, 20)], true)
-		'book':
-			_poly(img, [Vector2(4, 5), Vector2(11, 5), Vector2(11, 20), Vector2(4, 20)], true)
-			_poly(img, [Vector2(13, 5), Vector2(20, 5), Vector2(20, 20), Vector2(13, 20)], true)
-			_l(img, Vector2(7, 9), Vector2(8, 9))
-			_l(img, Vector2(16, 9), Vector2(17, 9))
-		'reset':
-			_l(img, Vector2(6, 6), Vector2(18, 18))
-			_l(img, Vector2(18, 6), Vector2(6, 18))
-		'cargo':
-			_poly(img, [Vector2(6, 1), Vector2(10.5, 4.5), Vector2(9, 11), Vector2(3, 11), Vector2(1.5, 4.5)], true)
-			_poly(img, [Vector2(1.5, 4.5), Vector2(6, 6.5), Vector2(10.5, 4.5)])
-			_l(img, Vector2(6, 6.5), Vector2(6, 11))
 		'emblem':
 			_poly(img, [Vector2(24, 3), Vector2(45, 24), Vector2(24, 45), Vector2(3, 24)], true)
 			_poly(img, [Vector2(24, 14), Vector2(34, 24), Vector2(24, 34), Vector2(14, 24)], true)

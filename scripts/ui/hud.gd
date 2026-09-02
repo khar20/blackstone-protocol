@@ -6,8 +6,6 @@ extends CanvasLayer
 
 const AMBER := Color(0xd9a05b)
 const AMBER_BRIGHT := Color(0xffe0a3)
-const BEIGE := Color(0xdcd5c5)
-const DIM := Color(0x807866)
 
 const ICONS_RES = preload("res://scripts/ui/icons.gd")
 
@@ -37,6 +35,16 @@ var _boss_hp: TextureRect
 var _target_dot: TextureRect
 var _core_fill: TextureRect
 var _mining_hint: Label
+
+var _last_hull := -1.0
+var _last_cargo := -1
+var _last_amber := -1
+var _last_obsidian := -1
+var _last_prism := -1
+var _last_loaded := -1
+var _last_weapon := ''
+var _last_heat := -1.0
+var _last_aligned := true
 
 func _ready() -> void:
 	_build()
@@ -108,11 +116,7 @@ func _add_cargo() -> void:
 	vb.add_child(res)
 	p.add_child(vb)
 
-func _res(_out: Label, kind: String) -> Label:
-	return _label('0', 11, _kind_color(kind))
-
-func _kind_color(kind: String) -> Color:
-	match kind:
+func _kind_color(kind: String) -> Color:	match kind:
 		'amber': return Color(0xffe0a3)
 		'obsidian': return Color(0xb0a8f0)
 		_: return Color(0x9fd0ff)
@@ -320,29 +324,50 @@ func _add_boss() -> void:
 	add_child(_boss)
 
 func _process(_delta: float) -> void:
-	if not player:
+	if not visible or not player:
 		return
-	_hull_fill.custom_minimum_size.x = 150.0 * clampf(GAME.hull / maxf(GAME.max_hull, 1.0), 0.0, 1.0)
-	_hull_fill.modulate = Color(1, 0.5, 0.3) if GAME.hull < 30.0 else AMBER
-	_cargo_val.text = '%04d' % floori(GAME.cargo)
-	_res_amber.text = str(floori(GAME.inventory['amber']))
-	_res_obsidian.text = str(floori(GAME.inventory['obsidian']))
-	_res_prism.text = str(floori(GAME.inventory['prism']))
-
-	var loaded: int = clampi(player.chamber, 0, GAME.MAX_CHAMBER)
-	var cells := _chamber_row.get_children()
-	for i in cells.size():
-		cells[i].color = _chamber_color(i < loaded)
-
+	var hull_frac := clampf(GAME.hull / maxf(GAME.max_hull, 1.0), 0.0, 1.0)
+	if hull_frac != _last_hull:
+		_last_hull = hull_frac
+		_hull_fill.custom_minimum_size.x = 150.0 * hull_frac
+		_hull_fill.modulate = Color(1, 0.5, 0.3) if GAME.hull < 30.0 else AMBER
+	var cargo := floori(GAME.cargo)
+	if cargo != _last_cargo:
+		_last_cargo = cargo
+		_cargo_val.text = '%04d' % cargo
+	var amber := floori(GAME.inventory['amber'])
+	if amber != _last_amber:
+		_last_amber = amber
+		_res_amber.text = str(amber)
+	var obsidian := floori(GAME.inventory['obsidian'])
+	if obsidian != _last_obsidian:
+		_last_obsidian = obsidian
+		_res_obsidian.text = str(obsidian)
+	var prism := floori(GAME.inventory['prism'])
+	if prism != _last_prism:
+		_last_prism = prism
+		_res_prism.text = str(prism)
+	var loaded := clampi(player.chamber, 0, GAME.MAX_CHAMBER)
+	if loaded != _last_loaded:
+		_last_loaded = loaded
+		var cells := _chamber_row.get_children()
+		for i in cells.size():
+			cells[i].color = _chamber_color(i < loaded)
 	var weapon: String = player.active_weapon
-	_mode_icon.texture = ICONS_RES.fetch('auto' if weapon == 'turret' else 'cannon')
-	_chamber_wrap.visible = weapon == 'cannon'
-	_heat_wrap.visible = weapon == 'turret'
+	if weapon != _last_weapon:
+		_last_weapon = weapon
+		_mode_icon.texture = ICONS_RES.fetch('auto' if weapon == 'turret' else 'cannon')
+		_chamber_wrap.visible = weapon == 'cannon'
+		_heat_wrap.visible = weapon == 'turret'
 	if weapon == 'turret':
-		_heat_fill.custom_minimum_size.x = 150.0 * clampf(1.0 - GAME.heat / GAME.max_heat, 0.0, 1.0)
-		_heat_fill.modulate = Color(1, 0.7, 0.3) if player.overheated or GAME.heat / GAME.max_heat > 0.75 else AMBER
-
-	_turret_status.modulate.a = 0.0 if player.is_turret_aligned else 0.8
+		var heat_frac := clampf(1.0 - GAME.heat / GAME.max_heat, 0.0, 1.0)
+		if heat_frac != _last_heat:
+			_last_heat = heat_frac
+			_heat_fill.custom_minimum_size.x = 150.0 * heat_frac
+			_heat_fill.modulate = Color(1, 0.7, 0.3) if player.overheated or GAME.heat / GAME.max_heat > 0.75 else AMBER
+	if player.is_turret_aligned != _last_aligned:
+		_last_aligned = player.is_turret_aligned
+		_turret_status.modulate.a = 0.0 if player.is_turret_aligned else 0.8
 
 	if player.reloading:
 		var frac: float = player.reload_timer / maxf(GAME.reload_time, 0.001)
@@ -415,7 +440,3 @@ func set_mining_active(active: bool) -> void:
 func open_mining_circle(frac: float) -> void:
 	if fx:
 		fx.set_mining_arc(frac, true)
-
-func hud_mine_stop() -> void:
-	if fx:
-		fx.set_mining_arc(0.0, false)

@@ -9,7 +9,6 @@ const RELOAD_TIME_MIN: float = 1.1
 
 var hull: float = 100.0
 var max_hull: float = 100.0
-var chamber: int = MAX_CHAMBER
 var heat: float = 0.0
 var inventory: Dictionary = { 'amber': 0.0, 'obsidian': 0.0, 'prism': 0.0 }
 var cargo: float = 0.0
@@ -28,7 +27,6 @@ var sweet_start: float = 0.58
 var sweet_end: float = 0.8
 var arc_limit: float = 45.0 * PI / 180.0
 var turret_slew_rate: float = 2.2
-var elevation_rate: float = 1.8
 var max_heat: float = 100.0
 var heat_cool_rate: float = 20.0
 var max_speed: float = 24.0
@@ -52,7 +50,6 @@ func recompute_stats() -> void:
 
 func reset_combat() -> void:
 	hull = max_hull
-	chamber = MAX_CHAMBER
 	heat = 0.0
 
 func reset_run() -> void:

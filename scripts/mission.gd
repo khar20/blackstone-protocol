@@ -69,7 +69,7 @@ func update(dt: float) -> void:
 			hud.set_corridor_warning(false, 0.0)
 		return
 
-	var outside: bool = _corridor_dist(player.position.x, player.position.z) > float(p['halfWidth'])
+	var outside: bool = TERRAIN.mission_corridor_dist(player.position.x, player.position.z) > float(p['halfWidth'])
 	if outside:
 		if not GAME.mission_was_outside:
 			SFX.overheat()
@@ -96,15 +96,3 @@ func _mission_route() -> Dictionary:
 		'dx': float(p['dest']['x']) - float(p['start']['x']),
 		'dz': float(p['dest']['z']) - float(p['start']['z']),
 	}
-
-func _corridor_dist(px: float, pz: float) -> float:
-	var p: Dictionary = TERRAIN.MISSION
-	var r := _mission_route()
-	var len2: float = r['dx'] * r['dx'] + r['dz'] * r['dz']
-	var tt: float = ((px - float(p['start']['x'])) * r['dx'] + (pz - float(p['start']['z'])) * r['dz']) / len2
-	var tc: float = clampf(tt, 0.0, 1.0)
-	var cx: float = float(p['start']['x']) + r['dx'] * tc
-	var cz: float = float(p['start']['z']) + r['dz'] * tc
-	var dx: float = px - cx
-	var dz: float = pz - cz
-	return sqrt(dx * dx + dz * dz)

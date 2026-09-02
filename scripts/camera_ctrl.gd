@@ -5,7 +5,6 @@ extends Camera3D
 
 var player: Node
 var world: Node
-var fx: Node
 
 var camera_mode := 'third'
 var distance := 15.0
@@ -28,7 +27,7 @@ func recoil(mag: float) -> void:
 func toggle_view() -> void:
 	camera_mode = 'first' if camera_mode == 'third' else 'third'
 
-func update_camera(dt: float, _elapsed: float) -> void:
+func update_camera(dt: float) -> void:
 	if not player:
 		return
 	var in_combat: bool = world != null and world.engaged_boss_zone() != null
@@ -65,7 +64,8 @@ func update_camera(dt: float, _elapsed: float) -> void:
 		look_at(player.current_aim_point, Vector3.UP)
 	else:
 		var optic_world: Vector3 = player.tank.optic_mount.global_position
-		var look_target: Vector3 = player.current_aim_point
+		var cannon_dir: Vector3 = -player.tank.gun_pitch.global_transform.basis.z
+		var look_target: Vector3 = optic_world + cannon_dir * 100.0
 		if shake_time > 0.0:
 			look_target += Vector3(sx * 3.0, sy * 3.0, 0)
 		global_position = optic_world

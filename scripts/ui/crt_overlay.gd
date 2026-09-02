@@ -1,15 +1,16 @@
-extends CanvasLayer
-## CRT scanline + grain overlay driven by the crt.gdshader shader on a full
-## screen ColorRect (kept subtle).
+class_name CrtOverlay
+## CRT scanline + grain from crt.gdshader, scoped to a single UI panel:
+## attach() adds a screen-sampling ColorRect as the last child of a panel so
+## only that panel's pixels get the effect (game world/camera untouched).
+## Hidden panel = rect not drawn = shader not executed (zero cost, no UI).
 
 const CRT_SHADER = preload("res://shaders/crt.gdshader")
 
-func _ready() -> void:
+static func attach(panel: Control) -> void:
 	var r := ColorRect.new()
-	r.show_behind_parent = false
 	r.set_anchors_preset(Control.PRESET_FULL_RECT)
 	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var mat := ShaderMaterial.new()
 	mat.shader = CRT_SHADER
 	r.material = mat
-	add_child(r)
+	panel.add_child(r)

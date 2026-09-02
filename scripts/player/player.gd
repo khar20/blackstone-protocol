@@ -12,8 +12,6 @@ const MAX_MINING_RANGE := 26.0
 const SHELL_SPEED := 98.0
 const SHELL_GRAVITY := 19.6
 const MOUSE_SENS := 0.0022
-const BASE_FOV := 56.0
-const ADS_FOV := 22.0
 
 var world: Node
 var camera: Node3D
@@ -49,6 +47,7 @@ var _beam: MeshInstance3D
 var _beam_mat: StandardMaterial3D
 var _mining_ring: MeshInstance3D
 var _ring_mat: StandardMaterial3D
+var _mining_ui := false
 
 func _ready() -> void:
 	tank = TANK_MODEL.new()
@@ -161,7 +160,6 @@ func _update_movement(delta: float) -> void:
 func _update_visuals(delta: float) -> void:
 	var fwd := Vector3(sin(hull_yaw), 0.0, cos(hull_yaw))
 	var right := Vector3(cos(hull_yaw), 0.0, -sin(hull_yaw))
-	tank.position = Vector3(position.x, position.y, position.z)
 	tank.rotation.y = hull_yaw
 	var sd := 2.4
 	var h_f := TERRAIN.get_effective_ground_height(position.x + fwd.x * sd, position.z + fwd.z * sd)
@@ -292,6 +290,13 @@ func _update_mining(delta: float) -> void:
 	var want_mine := Input.is_key_pressed(KEY_F) and alive and not in_panel and GAME.state == 'PLAYING' \
 		and not dialogue and camera != null
 	if not want_mine:
+		if _mining_ui:
+			_mining_ui = false
+			_beam_active = false
+			_mining_ring.visible = false
+			if hud:
+				hud.set_mining_active(false)
+				hud.open_mining_circle(0.0)
 		return
 	var closest: Node = null
 	var closest_dist := INF
@@ -338,9 +343,9 @@ func _update_mining(delta: float) -> void:
 		_beam_active = false
 	if hud:
 		hud.set_mining_active(closest != null)
+	_mining_ui = true
 	_mining_ring.visible = true
 	_mining_ring.position = Vector3(position.x, TERRAIN.get_effective_ground_height(position.x, position.z) + 0.1, position.z)
-	_mining_ring.rotation.y = 0.0
 
 var _beam_active := false
 var _beam_source := Vector3.ZERO

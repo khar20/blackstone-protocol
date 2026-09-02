@@ -4,14 +4,6 @@ extends Node
 ## biome field, base height, effective ground height). Do not swap these for
 ## FastNoiseLite — terrain shape and biome colors must stay deterministic.
 
-const SHELL_SPEED: float = 98.0
-const SHELL_GRAVITY: float = 19.6
-const WIND_X: float = 0.5
-const WIND_Z: float = 0.2
-const MAX_MINING_RANGE: float = 26.0
-const MOUSE_SENS: float = 0.0022
-const WORLD_BOUND: float = 1250.0
-
 var BIOMES: Array = [
 	{ 'name': 'BLEACHED SALT FLATS',        'base': Color(0xe0dad0) / 255.0, 'alt': Color(0xcac3b5) / 255.0 },
 	{ 'name': 'OXIDIZED SANDSTONE CANYON',  'base': Color(0xa16e49) / 255.0, 'alt': Color(0xbf855e) / 255.0 },
@@ -60,9 +52,6 @@ var NODE_TYPES: Dictionary = {
 	'prism':    { 'color': Color(0xb0d5eb), 'emissive': Color(0x3b647f), 'pool': 30, 'rate': 0.9, 'value': 5.5, 'name': 'CELESTIAL PRISM BLOOM' },
 }
 
-func clampf(v: float, lo: float, hi: float) -> float:
-	return minf(maxf(v, lo), hi)
-
 func _si32(v: int) -> int:
 	v = v & 0xFFFFFFFF
 	if v >= 0x80000000:
@@ -108,14 +97,6 @@ func fractal_noise(x: float, y: float, seedv: int, octaves: int, persistence: fl
 
 func biome_field(x: float, z: float) -> float:
 	return fractal_noise(x * 0.0014, z * 0.0014, 910, 3, 0.5) * float(BIOMES.size())
-
-func biome_at(x: float, z: float) -> Dictionary:
-	var b := clampf(biome_field(x, z), 0.0, BIOMES.size() - 0.001)
-	var idx := int(floor(b))
-	var frac := smooth(b - idx)
-	var c1: Color = BIOMES[idx]['base']
-	var c2: Color = BIOMES[mini(idx + 1, BIOMES.size() - 1)]['base']
-	return { 'idx': idx, 'frac': frac, 'c1': c1, 'c2': c2 }
 
 func terrain_height_at(x: float, z: float) -> float:
 	var b := clampf(biome_field(x, z), 0.0, BIOMES.size() - 0.001)
