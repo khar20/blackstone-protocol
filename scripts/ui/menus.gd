@@ -37,6 +37,9 @@ func _menu_screen(content: Callable) -> PanelContainer:
 	var sc := PanelContainer.new()
 	sc.set_anchors_preset(Control.PRESET_FULL_RECT)
 	sc.mouse_filter = Control.MOUSE_FILTER_STOP
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Color('#0e0c0a'), 0.88); sb.content_margin_left=24; sb.content_margin_right=24
+	sc.add_theme_stylebox_override("panel", sb)
 	var vb := VBoxContainer.new()
 	vb.alignment = BoxContainer.ALIGNMENT_CENTER
 	vb.add_theme_constant_override("separation", 24)
@@ -54,7 +57,7 @@ func _assign_title_START(vb: VBoxContainer) -> void:
 	var t := Label.new()
 	t.text = 'BLACKSTONE PROTOCOL'
 	t.add_theme_font_size_override("font_size", 30)
-	t.add_theme_color_override("font_color", Color(0xffe0a3))
+	t.add_theme_color_override("font_color", Color('#ffe0a3'))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(t)
 	var nav := VBoxContainer.new()
@@ -69,7 +72,7 @@ func _assign_pause_START(vb: VBoxContainer) -> void:
 	var t := Label.new()
 	t.text = 'SYSTEM PAUSED'
 	t.add_theme_font_size_override("font_size", 26)
-	t.add_theme_color_override("font_color", Color(0xffe0a3))
+	t.add_theme_color_override("font_color", Color('#ffe0a3'))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(t)
 	var nav := VBoxContainer.new()
@@ -84,17 +87,18 @@ func _menu_btn(label: String, cb: Callable) -> Button:
 	var b := Button.new()
 	b.text = label
 	b.focus_mode = Control.FOCUS_NONE
-	b.add_theme_font_size_override("font_size", 13)
-	b.custom_minimum_size = Vector2(280, 34)
+	b.add_theme_font_size_override("font_size", 14)
+	b.custom_minimum_size = Vector2(300, 42)
 	b.pressed.connect(cb)
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0xd9a05b, 0.12)
-	style.border_color = Color(0xd9a05b)
-	style.set_border_width_all(1)
+	style.bg_color = Color(Color('#1a160f'), 0.9); style.border_color = Color('#d9a05b'); style.set_border_width_all(1)
+	style.corner_radius_top_left=4; style.corner_radius_top_right=4; style.corner_radius_bottom_left=4; style.corner_radius_bottom_right=4
+	style.content_margin_left=12; style.content_margin_right=12; style.content_margin_top=6; style.content_margin_bottom=6
 	b.add_theme_stylebox_override("normal", style)
-	var hover := style.duplicate()
-	hover.bg_color = Color(0xd9a05b, 0.28)
+	var hover := style.duplicate(); hover.bg_color = Color(Color('#d9a05b'), 0.22); hover.border_color = Color('#ffe0a3')
 	b.add_theme_stylebox_override("hover", hover)
+	var press := style.duplicate(); press.bg_color = Color(Color('#d9a05b'), 0.35)
+	b.add_theme_stylebox_override("pressed", press)
 	return b
 
 func _controls_screen() -> PanelContainer:
@@ -113,7 +117,7 @@ func _controls_screen() -> PanelContainer:
 	var t := Label.new()
 	t.text = 'FIELD CONTROLS'
 	t.add_theme_font_size_override("font_size", 14)
-	t.add_theme_color_override("font_color", Color(0xffe0a3))
+	t.add_theme_color_override("font_color", Color('#ffe0a3'))
 	t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(t)
 	var lines: Array = [
@@ -133,13 +137,13 @@ func _controls_screen() -> PanelContainer:
 		var k := Label.new()
 		k.text = pair[0]
 		k.add_theme_font_size_override("font_size", 11)
-		k.add_theme_color_override("font_color", Color(0xd9a05b))
+		k.add_theme_color_override("font_color", Color('#d9a05b'))
 		k.custom_minimum_size = Vector2(150, 0)
 		k.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		var d := Label.new()
 		d.text = pair[1]
 		d.add_theme_font_size_override("font_size", 11)
-		d.add_theme_color_override("font_color", Color(0xdcd5c5))
+		d.add_theme_color_override("font_color", Color('#dcd5c5'))
 		r.add_child(k)
 		r.add_child(d)
 		vb.add_child(r)

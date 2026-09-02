@@ -22,8 +22,8 @@ func _ready() -> void:
 	mat.vertex_color_use_as_albedo = true
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_round_mesh = PRIMITIVES.box_mesh([
-		{ 'min': Vector3(-0.12, -0.12, -0.12), 'max': Vector3(0.12, 0.12, 0.12), 'color': Color(0xffe0a3) },
-		{ 'min': Vector3(-0.035, -0.035, 0.12), 'max': Vector3(0.035, 0.035, 1.7), 'color': Color(0xd9a05b) },
+		{ 'min': Vector3(-0.12, -0.12, -0.12), 'max': Vector3(0.12, 0.12, 0.12), 'color': Color('#ffe0a3') },
+		{ 'min': Vector3(-0.035, -0.035, 0.12), 'max': Vector3(0.035, 0.035, 1.7), 'color': Color('#d9a05b') },
 	])
 	_round_mesh.surface_set_material(0, mat)
 

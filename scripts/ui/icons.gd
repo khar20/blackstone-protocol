@@ -3,7 +3,7 @@ class_name Icons
 ## Placeholders only; real art can replace the draw calls later.
 
 static var _cache: Dictionary = {}
-static var AMBER := Color(0xd9a05b)
+static var AMBER := Color('#d9a05b')
 
 static func _l(img: Image, p0: Vector2, p1: Vector2) -> void:
 	var d: Vector2 = (p1 - p0).abs()

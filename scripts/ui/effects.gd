@@ -3,9 +3,9 @@ extends CanvasLayer
 ## handler), damage flash, hitmarker, and the dual reticle (cannon ballistic
 ## impact circle + turret crosshair + reload/mining rings).
 
-const AMBER := Color(0xd9a05b)
-const AMBER_BRIGHT := Color(0xffe0a3)
-const BEIGE := Color(0xdcd5c5)
+const AMBER := Color('#d9a05b')
+const AMBER_BRIGHT := Color('#ffe0a3')
+const BEIGE := Color('#dcd5c5')
 
 const DIALOGUE_RES = preload("res://scripts/ui/dialogue.gd")
 
@@ -149,28 +149,28 @@ func _make_ring() -> TextureRect:
 		for x in 32:
 			var d := Vector2(x - 16, y - 16).length()
 			if d >= 12.0 and d <= 15.0:
-				img.set_pixel(x, y, Color(0xffe0a3, 0.8))
+				img.set_pixel(x, y, Color(Color('#ffe0a3'), 0.8))
 	tx.texture = ImageTexture.create_from_image(img)
 	return tx
 
 func _draw_reticle(r: Control) -> void:
 	var c := Vector2(22, 22)
-	var tl := 5.0
-	r.draw_line(c + Vector2(-5, -tl), c + Vector2(-5, -2), AMBER, 1.5)
-	r.draw_line(c + Vector2(5, -tl), c + Vector2(5, -2), AMBER, 1.5)
-	r.draw_line(c + Vector2(-5, tl), c + Vector2(-5, 2), AMBER, 1.5)
-	r.draw_line(c + Vector2(5, tl), c + Vector2(5, 2), AMBER, 1.5)
-	r.draw_line(c + Vector2(-tl, -5), c + Vector2(-2, -5), AMBER, 1.5)
-	r.draw_line(c + Vector2(-tl, 5), c + Vector2(-2, 5), AMBER, 1.5)
-	r.draw_line(c + Vector2(tl, -5), c + Vector2(2, -5), AMBER, 1.5)
-	r.draw_line(c + Vector2(tl, 5), c + Vector2(2, 5), AMBER, 1.5)
-	r.draw_circle(c, 1.5, AMBER_BRIGHT)
+	var tl := 6.0
+	r.draw_line(c + Vector2(-5, -tl), c + Vector2(-5, -2), AMBER, 2.0)
+	r.draw_line(c + Vector2(5, -tl), c + Vector2(5, -2), AMBER, 2.0)
+	r.draw_line(c + Vector2(-5, tl), c + Vector2(-5, 2), AMBER, 2.0)
+	r.draw_line(c + Vector2(5, tl), c + Vector2(5, 2), AMBER, 2.0)
+	r.draw_line(c + Vector2(-tl, -5), c + Vector2(-2, -5), AMBER, 2.0)
+	r.draw_line(c + Vector2(-tl, 5), c + Vector2(-2, 5), AMBER, 2.0)
+	r.draw_line(c + Vector2(tl, -5), c + Vector2(2, -5), AMBER, 2.0)
+	r.draw_line(c + Vector2(tl, 5), c + Vector2(2, 5), AMBER, 2.0)
+	r.draw_circle(c, 2.0, AMBER_BRIGHT)
 	if _reload_frac >= 0.0 and not _in_sweet:
-		r.draw_arc(c, 19, -PI / 2, -PI / 2 + TAU * _reload_frac, 48, AMBER, 2.5)
+		r.draw_arc(c, 19, -PI / 2, -PI / 2 + TAU * _reload_frac, 48, AMBER, 3.0)
 	elif _reload_frac >= 0.0:
-		r.draw_arc(c, 19, -PI / 2, -PI / 2 + TAU * _reload_frac, 48, AMBER_BRIGHT, 2.5)
+		r.draw_arc(c, 19, -PI / 2, -PI / 2 + TAU * _reload_frac, 48, AMBER_BRIGHT, 3.0)
 	if _mining_frac > 0.0:
-		r.draw_arc(c, 20, -PI / 2, -PI / 2 + TAU * _mining_frac, 48, AMBER_BRIGHT, 2.5)
+		r.draw_arc(c, 20, -PI / 2, -PI / 2 + TAU * _mining_frac, 48, AMBER_BRIGHT, 3.0)
 
 func show_banner(text: String) -> void:
 	_banner.text = text
@@ -233,7 +233,7 @@ func update(dt: float) -> void:
 
 	if player and player.alive and GAME.state == 'PLAYING' and player.active_weapon == 'cannon' and camera:
 		var muzzle: Vector3 = player.tank.barrel_tip.global_position
-		var impact: Vector3 = muzzle + -player.tank.gun_pitch.global_transform.basis.z * 200.0
+		var impact: Vector3 = muzzle + player.tank.gun_pitch.global_transform.basis.z * 200.0
 		var pp: Vector2 = camera.unproject_position(impact)
 		_cannon_circle.position = pp - Vector2(16, 16)
 		var to_impact := impact - camera.global_position

@@ -31,7 +31,7 @@ func setup(k: String, at: Vector3, variant: int) -> void:
 	_gem_mat.roughness = 0.2
 	_gem_mat.metallic = 0.9
 	_base_mat = StandardMaterial3D.new()
-	_base_mat.albedo_color = Color(0x2b2824)
+	_base_mat.albedo_color = Color('#2b2824')
 	_base_mat.emission_enabled = true
 	_base_mat.emission = spec['emissive']
 	_base_mat.emission_energy_multiplier = 0.35

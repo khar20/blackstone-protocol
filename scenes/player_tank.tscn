@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://c0blackstone0tank"]
+[gd_scene load_steps=2 format=3 uid="uid://75jy677nxy7e"]
 
-[ext_resource type="Script" path="res://scripts/player/player.gd" id="1_tank"]
+[ext_resource type="Script" uid="uid://blo4lm6qgohfo" path="res://scripts/player/player.gd" id="1_tank"]
 
 [node name="PlayerTank" type="Node3D"]
 script = ExtResource("1_tank")

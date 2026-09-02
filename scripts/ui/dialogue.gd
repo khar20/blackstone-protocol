@@ -63,39 +63,23 @@ func _ready() -> void:
 
 func _build() -> void:
 	_panel = PanelContainer.new()
-	_panel.anchor_left = 0.5
-	_panel.anchor_right = 0.5
-	_panel.anchor_top = 0.5
-	_panel.anchor_bottom = 0.5
-	_panel.offset_left = -340
-	_panel.offset_right = 340
-	_panel.offset_top = -150
-	_panel.offset_bottom = 30
-	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 14)
-	_title = Label.new()
-	_title.add_theme_font_size_override("font_size", 12)
-	_title.add_theme_color_override("font_color", Color(0xd9a05b))
-	_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_body = Label.new()
-	_body.add_theme_font_size_override("font_size", 13)
-	_body.add_theme_color_override("font_color", Color(0xdcd5c5))
-	_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_body.custom_minimum_size = Vector2(640, 120)
-	_hint = Label.new()
-	_hint.add_theme_font_size_override("font_size", 10)
-	_hint.add_theme_color_override("font_color", Color(0xd9a05b))
-	_hint.text = "[ E ] CONTINUE"
-	vb.add_child(_title)
-	vb.add_child(_body)
-	vb.add_child(_hint)
+	_panel.anchor_left = 0.5; _panel.anchor_right = 0.5; _panel.anchor_top = 0.5; _panel.anchor_bottom = 0.5
+	_panel.offset_left = -360; _panel.offset_right = 360; _panel.offset_top = -160; _panel.offset_bottom = 50
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Color('#1a160f'), 0.92); sb.border_color = Color(Color('#d9a05b'), 0.65)
+	sb.set_border_width_all(1); sb.corner_radius_top_left=6; sb.corner_radius_top_right=6; sb.corner_radius_bottom_left=6; sb.corner_radius_bottom_right=6
+	sb.content_margin_left=16; sb.content_margin_right=16; sb.content_margin_top=14; sb.content_margin_bottom=14
+	_panel.add_theme_stylebox_override("panel", sb)
+	var vb := VBoxContainer.new(); vb.add_theme_constant_override("separation", 14)
+	_title = Label.new(); _title.add_theme_font_size_override("font_size", 13); _title.add_theme_color_override("font_color", Color('#ffe0a3')); _title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_body = Label.new(); _body.add_theme_font_size_override("font_size", 14); _body.add_theme_color_override("font_color", Color('#dcd5c5')); _body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; _body.custom_minimum_size = Vector2(680, 130)
+	_hint = Label.new(); _hint.add_theme_font_size_override("font_size", 11); _hint.add_theme_color_override("font_color", Color('#d9a05b')); _hint.text = "[ E ]  CONTINUAR  ·  CLICK"
+	vb.add_child(_title); vb.add_child(_body); vb.add_child(_hint)
 	_panel.add_child(vb)
 	_panel.gui_input.connect(func(ev: InputEvent) -> void:
 		if visible and ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
 			advance())
-	add_child(_panel)
-	CRT_RES.attach(_panel)
-	visible = false
+	add_child(_panel); CRT_RES.attach(_panel); visible = false
 
 func open(pages: Array, on_close: Callable = Callable()) -> void:
 	_pages = pages

@@ -1,6 +1,58 @@
-[gd_scene load_steps=2 format=3 uid="uid://c0blackstone0main"]
+[gd_scene load_steps=12 format=3 uid="uid://75jy677nqy2h"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://builwhb24qf3w" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://0bnqqjqbe5wa" path="res://scripts/world/world.gd" id="2_world"]
+[ext_resource type="Script" uid="uid://blo4lm6qgohfo" path="res://scripts/player/player.gd" id="3_player"]
+[ext_resource type="Script" uid="uid://bh1myt1s6evfa" path="res://scripts/camera_ctrl.gd" id="4_camera"]
+[ext_resource type="Script" uid="uid://d1s41m3me0vrq" path="res://scripts/mission.gd" id="5_mission"]
+[ext_resource type="Script" uid="uid://3by50lbx7gqv" path="res://scripts/ui/effects.gd" id="6_effects"]
+[ext_resource type="Script" uid="uid://d272l5mwuyt2p" path="res://scripts/ui/hud.gd" id="7_hud"]
+[ext_resource type="Script" uid="uid://bdhsadmnfbguw" path="res://scripts/ui/garage.gd" id="8_garage"]
+[ext_resource type="Script" uid="uid://vbpik7so0hfj" path="res://scripts/ui/menus.gd" id="9_menus"]
+[ext_resource type="Script" uid="uid://dlef2kvfdiiay" path="res://scripts/ui/dialogue.gd" id="10_dialogue"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_preview"]
+size = Vector3(4, 0.6, 6)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_main")
+
+[node name="World" type="Node3D" parent="."]
+script = ExtResource("2_world")
+
+[node name="EditorPreview" type="MeshInstance3D" parent="World"]
+mesh = SubResource("BoxMesh_preview")
+skeleton = NodePath("")
+
+[node name="Player" type="Node3D" parent="."]
+script = ExtResource("3_player")
+
+[node name="EditorPreview" type="MeshInstance3D" parent="Player"]
+mesh = SubResource("BoxMesh_preview")
+skeleton = NodePath("")
+
+[node name="Camera" type="Camera3D" parent="."]
+script = ExtResource("4_camera")
+
+[node name="Mission" type="Node" parent="."]
+script = ExtResource("5_mission")
+
+[node name="Effects" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("6_effects")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 11
+script = ExtResource("7_hud")
+
+[node name="Garage" type="CanvasLayer" parent="."]
+layer = 12
+script = ExtResource("8_garage")
+
+[node name="Menus" type="CanvasLayer" parent="."]
+layer = 20
+script = ExtResource("9_menus")
+
+[node name="Dialogue" type="CanvasLayer" parent="."]
+layer = 21
+script = ExtResource("10_dialogue")

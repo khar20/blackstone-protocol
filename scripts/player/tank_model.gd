@@ -6,10 +6,10 @@ extends Node3D
 
 const PRIMITIVES = preload("res://scripts/world/primitives.gd")
 
-const HULL := Color(0x3a3630)
-const HULL_DARK := Color(0x241f19)
-const AMBER := Color(0xd9a05b)
-const STEEL := Color(0x9aa0a4)
+const HULL := Color('#3a3630')
+const HULL_DARK := Color('#241f19')
+const AMBER := Color('#d9a05b')
+const STEEL := Color('#9aa0a4')
 
 var turret_pivot: Node3D
 var gun_pitch: Node3D
@@ -71,7 +71,7 @@ func _ready() -> void:
 	optic_mount.position = Vector3(0, 0.75, 1.0)
 	turret_pivot.add_child(optic_mount)
 	muzzle_light = OmniLight3D.new()
-	muzzle_light.light_color = Color(0xf2c98a)
+	muzzle_light.light_color = Color('#f2c98a')
 	muzzle_light.light_energy = 0.0
 	muzzle_light.omni_range = 18.0
 	barrel_tip.add_child(muzzle_light)

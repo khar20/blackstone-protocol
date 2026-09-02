@@ -3,10 +3,10 @@ render_mode unshaded;
 
 uniform sampler2D SCREEN_TEXTURE : hint_screen_texture, filter_linear_mipmap;
 
-uniform float intensity : hint_range(0.0, 1.0) = 0.22;
-uniform float scanline_density : hint_range(10.0, 200.0) = 90.0;
-uniform float scanline_speed : hint_range(0.0, 2.0) = 0.35;
-uniform float noise_amount : hint_range(0.0, 1.0) = 0.06;
+uniform float intensity : hint_range(0.0, 1.0) = 0.14;
+uniform float scanline_density : hint_range(10.0, 200.0) = 110.0;
+uniform float scanline_speed : hint_range(0.0, 2.0) = 0.25;
+uniform float noise_amount : hint_range(0.0, 1.0) = 0.04;
 
 void fragment() {
 	vec2 uv = SCREEN_UV;
