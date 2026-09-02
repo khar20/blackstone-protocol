@@ -15,44 +15,22 @@ func _ready() -> void:
 	call_deferred("build")
 
 var _h_arr: PackedFloat32Array
+var _verts: PackedVector3Array
+var _cols: PackedColorArray
+var _norms: PackedVector3Array
 
-func _thread_fill_heights(n: int, step: float, half: float) -> void:
-	# corre en Thread — sin await, sin acceso a SceneTree
+func _thread_prepare(n: int, step: float, half: float) -> void:
+	# Todo lo pesado (alturas + bioma + speck + normal) en Thread → 0ms hitch en main
 	for z in n:
 		for x in n:
 			var wx := -half + x * step
 			var wz := -half + z * step
 			_h_arr[z * n + x] = TERRAIN.get_effective_ground_height(wx, wz)
-
-func build() -> void:
-	if _built:
-		return
-	_built = true
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	st.set_smooth_group(-1)
-	var step := WORLD_SIZE / float(SEG)
-	var half := WORLD_SIZE * 0.5
-	var n: int = SEG + 1
-	_h_arr = PackedFloat32Array()
-	_h_arr.resize(n * n)
-	# precalentar cache de centros (Dictionary no thread-safe) en main
-	for o in TERRAIN.OUTPOST_COORDS:
-		TERRAIN.get_effective_ground_height(float(o['x']), float(o['z']))
-	# ponytail: alturas en Thread → 0ms en main (antes 280/frame =21ms hitch, nunca debe bajar fps)
-	var th := Thread.new()
-	th.start(_thread_fill_heights.bind(n, step, half))
-	while th.is_alive():
-		await get_tree().process_frame
-	th.wait_to_finish()
-	var h_arr := _h_arr
-	# vértices aún en main pero chunk pequeño: 280/frame ≈ 8-10ms tras optimizar sin heights
-	var v_cnt := 0
 	for z in n:
 		for x in n:
 			var wx := -half + x * step
 			var wz := -half + z * step
-			var h: float = h_arr[z * n + x]
+			var h: float = _h_arr[z * n + x]
 			var b := clampf(TERRAIN.biome_field(wx, wz), 0.0, TERRAIN.BIOMES.size() - 0.001)
 			var idx := int(floor(b))
 			var frac := TERRAIN.smooth(b - idx)
@@ -63,14 +41,43 @@ func build() -> void:
 			if h > 12.0:
 				col = col.lerp(TERRAIN.BIOMES[4]['alt'], minf(1.0, (h - 12.0) / 14.0))
 			col = Color(col.r * speck, col.g * speck, col.b * speck)
-			var nx := h_arr[maxi(z - 1, 0) * n + x] - h_arr[mini(z + 1, n - 1) * n + x]
-			var nz := h_arr[z * n + maxi(x - 1, 0)] - h_arr[z * n + mini(x + 1, n - 1)]
-			st.set_normal(Vector3(nx, 2.0 * step, nz).normalized())
-			st.set_color(col)
-			st.add_vertex(Vector3(wx, h, wz))
-			v_cnt += 1
-			if v_cnt % 420 == 0:
-				await get_tree().process_frame
+			var nx := _h_arr[maxi(z - 1, 0) * n + x] - _h_arr[mini(z + 1, n - 1) * n + x]
+			var nz := _h_arr[z * n + maxi(x - 1, 0)] - _h_arr[z * n + mini(x + 1, n - 1)]
+			var idx_flat := z * n + x
+			_verts[idx_flat] = Vector3(wx, h, wz)
+			_cols[idx_flat] = col
+			_norms[idx_flat] = Vector3(nx, 2.0 * step, nz).normalized()
+
+func build() -> void:
+	if _built:
+		return
+	_built = true
+	var step := WORLD_SIZE / float(SEG)
+	var half := WORLD_SIZE * 0.5
+	var n: int = SEG + 1
+	_h_arr = PackedFloat32Array(); _h_arr.resize(n * n)
+	_verts = PackedVector3Array(); _verts.resize(n * n)
+	_cols = PackedColorArray(); _cols.resize(n * n)
+	_norms = PackedVector3Array(); _norms.resize(n * n)
+	for o in TERRAIN.OUTPOST_COORDS:
+		TERRAIN.get_effective_ground_height(float(o['x']), float(o['z']))
+	var th := Thread.new()
+	th.start(_thread_prepare.bind(n, step, half))
+	while th.is_alive():
+		await get_tree().process_frame
+	th.wait_to_finish()
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	st.set_smooth_group(-1)
+	# solo copia de buffers precalculados → ~1ms/800 verts, NUNCA lento
+	for i in n * n:
+		st.set_normal(_norms[i])
+		st.set_color(_cols[i])
+		st.add_vertex(_verts[i])
+		if i % 800 == 0 and i != 0:
+			await get_tree().process_frame
+	# liberar buffers pesados
+	_h_arr = PackedFloat32Array(); _verts = PackedVector3Array(); _cols = PackedColorArray(); _norms = PackedVector3Array()
 	var i_cnt := 0
 	for z in SEG:
 		for x in SEG:
