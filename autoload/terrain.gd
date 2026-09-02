@@ -5,12 +5,12 @@ extends Node
 ## FastNoiseLite — terrain shape and biome colors must stay deterministic.
 
 var BIOMES: Array = [
-	{ 'name': 'BLEACHED SALT FLATS',        'base': Color(0xe0dad0) / 255.0, 'alt': Color(0xcac3b5) / 255.0 },
-	{ 'name': 'OXIDIZED SANDSTONE CANYON',  'base': Color(0xa16e49) / 255.0, 'alt': Color(0xbf855e) / 255.0 },
-	{ 'name': 'LICHEN RIVER VALLEY',        'base': Color(0x525c48) / 255.0, 'alt': Color(0x3b4534) / 255.0 },
-	{ 'name': 'VOLCANIC OBSIDIAN DUNES',    'base': Color(0x211f1c) / 255.0, 'alt': Color(0x36322b) / 255.0 },
-	{ 'name': 'GLACIAL PRISM HIGHLANDS',    'base': Color(0x758896) / 255.0, 'alt': Color(0xa2b7c4) / 255.0 },
-	{ 'name': 'SULFUR BASIN & FOOTHILLS',   'base': Color(0x948658) / 255.0, 'alt': Color(0xb8a972) / 255.0 },
+	{ 'name': 'BLEACHED SALT FLATS',        'base': Color('#e0dad0'), 'alt': Color('#cac3b5') },
+	{ 'name': 'OXIDIZED SANDSTONE CANYON',  'base': Color('#a16e49'), 'alt': Color('#bf855e') },
+	{ 'name': 'LICHEN RIVER VALLEY',        'base': Color('#525c48'), 'alt': Color('#3b4534') },
+	{ 'name': 'VOLCANIC OBSIDIAN DUNES',    'base': Color('#211f1c'), 'alt': Color('#36322b') },
+	{ 'name': 'GLACIAL PRISM HIGHLANDS',    'base': Color('#758896'), 'alt': Color('#a2b7c4') },
+	{ 'name': 'SULFUR BASIN & FOOTHILLS',   'base': Color('#948658'), 'alt': Color('#b8a972') },
 ]
 
 var OUTPOST_COORDS: Array = [
@@ -47,9 +47,9 @@ var BOSS: Dictionary = {
 }
 
 var NODE_TYPES: Dictionary = {
-	'amber':    { 'color': Color(0xd9a05b), 'emissive': Color(0x6b4515), 'pool': 45, 'rate': 1.0, 'value': 1.0, 'name': 'AMBER PRISM CLUSTER' },
-	'obsidian': { 'color': Color(0x221f1c), 'emissive': Color(0x141210), 'pool': 65, 'rate': 0.7, 'value': 2.5, 'name': 'OBSIDIAN GEODE SPIRE' },
-	'prism':    { 'color': Color(0xb0d5eb), 'emissive': Color(0x3b647f), 'pool': 30, 'rate': 0.9, 'value': 5.5, 'name': 'CELESTIAL PRISM BLOOM' },
+	'amber':    { 'color': Color('#d9a05b'), 'emissive': Color('#6b4515'), 'pool': 45, 'rate': 1.0, 'value': 1.0, 'name': 'AMBER PRISM CLUSTER' },
+	'obsidian': { 'color': Color('#221f1c'), 'emissive': Color('#141210'), 'pool': 65, 'rate': 0.7, 'value': 2.5, 'name': 'OBSIDIAN GEODE SPIRE' },
+	'prism':    { 'color': Color('#b0d5eb'), 'emissive': Color('#3b647f'), 'pool': 30, 'rate': 0.9, 'value': 5.5, 'name': 'CELESTIAL PRISM BLOOM' },
 }
 
 func _si32(v: int) -> int:

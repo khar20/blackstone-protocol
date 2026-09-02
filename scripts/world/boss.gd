@@ -5,9 +5,9 @@ extends Node3D
 
 const PRIMITIVES = preload("res://scripts/world/primitives.gd")
 
-const CRYSTAL_ALBEDO := Color(0xcfc8b8)
-const CRYSTAL_EMISSIVE := Color(0xd9a441)
-const RING_COL := Color(0xd9a441)
+const CRYSTAL_ALBEDO := Color('#cfc8b8')
+const CRYSTAL_EMISSIVE := Color('#d9a441')
+const RING_COL := Color('#d9a441')
 
 var zone_center := Vector3.ZERO
 var world: Node
@@ -149,11 +149,11 @@ func _update_attacks(dt: float, player_pos: Vector3, player_vel: Vector3) -> voi
 
 func _spawn_shard(pos: Vector3, vel: Vector3) -> void:
 	var mi := MeshInstance3D.new()
-	mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-0.35, -0.35, -0.35), 'max': Vector3(0.35, 0.35, 0.35), 'color': Color(0xd9a441) }])
+	mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-0.35, -0.35, -0.35), 'max': Vector3(0.35, 0.35, 0.35), 'color': Color('#d9a441') }])
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0xd9a441)
+	mat.albedo_color = Color('#d9a441')
 	mat.emission_enabled = true
-	mat.emission = Color(0xd9a441)
+	mat.emission = Color('#d9a441')
 	mat.emission_energy_multiplier = 1.5
 	mi.mesh.surface_set_material(0, mat)
 	mi.position = pos

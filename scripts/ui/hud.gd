@@ -4,8 +4,8 @@ extends CanvasLayer
 ## turret alignment. Separate panel nodes built in code; per-frame polling of
 ## GAME/player/world readouts (matches updateHUD()).
 
-const AMBER := Color(0xd9a05b)
-const AMBER_BRIGHT := Color(0xffe0a3)
+const AMBER := Color('#d9a05b')
+const AMBER_BRIGHT := Color('#ffe0a3')
 
 const ICONS_RES = preload("res://scripts/ui/icons.gd")
 
@@ -69,9 +69,17 @@ func _panel(at_anchor: Vector2, off: Vector2) -> PanelContainer:
 	p.offset_top = off.y
 	p.offset_bottom = off.y + 46
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0x120f0a, 0.6)
-	sb.border_color = Color(0xd9a05b, 0.4)
+	sb.bg_color = Color(Color('#1a160f'), 0.78)
+	sb.border_color = Color(Color('#d9a05b'), 0.55)
 	sb.set_border_width_all(1)
+	sb.corner_radius_top_left = 4
+	sb.corner_radius_top_right = 4
+	sb.corner_radius_bottom_left = 4
+	sb.corner_radius_bottom_right = 4
+	sb.content_margin_left = 8
+	sb.content_margin_right = 8
+	sb.content_margin_top = 6
+	sb.content_margin_bottom = 6
 	p.add_theme_stylebox_override("panel", sb)
 	add_child(p)
 	return p
@@ -91,35 +99,43 @@ func _white() -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 func _add_hull() -> void:
-	var p := _panel(Vector2(0.14, 0.12), Vector2(-400, 0))
-	var r := HBoxContainer.new()
-	r.add_theme_constant_override("separation", 8)
-	_hull_fill = _bar_texture()
-	r.add_child(_hull_fill)
+	# ponytail: anclado a esquina real, no a 0.14 raro que se cortaba en tu captura
+	var p := PanelContainer.new()
+	p.anchor_left = 0; p.anchor_top = 0; p.anchor_right = 0; p.anchor_bottom = 0
+	p.offset_left = 16; p.offset_top = 16; p.offset_right = 296; p.offset_bottom = 62
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Color('#1a160f'), 0.82); sb.border_color = Color(Color('#d9a05b'), 0.55)
+	sb.set_border_width_all(1); sb.corner_radius_top_left=4; sb.corner_radius_top_right=4; sb.corner_radius_bottom_left=4; sb.corner_radius_bottom_right=4
+	sb.content_margin_left=10; sb.content_margin_right=10; sb.content_margin_top=6; sb.content_margin_bottom=6
+	p.add_theme_stylebox_override("panel", sb); add_child(p)
+	var r := HBoxContainer.new(); r.add_theme_constant_override("separation", 8); r.alignment = BoxContainer.ALIGNMENT_CENTER
+	var lbl := _label('HULL', 10, AMBER); r.add_child(lbl)
+	_hull_fill = _bar_texture(); _hull_fill.custom_minimum_size.y = 8; r.add_child(_hull_fill)
 	p.add_child(r)
 
 func _add_cargo() -> void:
-	var p := _panel(Vector2(0.86, 0.12), Vector2(-210, 0))
-	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 2)
-	_cargo_val = _label('0000', 16, AMBER_BRIGHT)
-	_cargo_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	vb.add_child(_cargo_val)
-	var res := HBoxContainer.new()
-	res.add_theme_constant_override("separation", 10)
-	_res_amber = _label('0', 11, _kind_color('amber'))
-	_res_obsidian = _label('0', 11, _kind_color('obsidian'))
-	_res_prism = _label('0', 11, _kind_color('prism'))
-	res.add_child(_res_amber)
-	res.add_child(_res_obsidian)
-	res.add_child(_res_prism)
-	vb.add_child(res)
-	p.add_child(vb)
+	var p := PanelContainer.new()
+	p.anchor_left = 1; p.anchor_top = 0; p.anchor_right = 1; p.anchor_bottom = 0
+	p.offset_left = -276; p.offset_top = 16; p.offset_right = -16; p.offset_bottom = 62
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Color('#1a160f'), 0.82); sb.border_color = Color(Color('#d9a05b'), 0.55)
+	sb.set_border_width_all(1); sb.corner_radius_top_left=4; sb.corner_radius_top_right=4; sb.corner_radius_bottom_left=4; sb.corner_radius_bottom_right=4
+	sb.content_margin_left=10; sb.content_margin_right=10; sb.content_margin_top=6; sb.content_margin_bottom=6
+	p.add_theme_stylebox_override("panel", sb); add_child(p)
+	var vb := VBoxContainer.new(); vb.add_theme_constant_override("separation", 2)
+	var top := HBoxContainer.new(); top.add_theme_constant_override("separation", 6); top.alignment = BoxContainer.ALIGNMENT_END
+	var cargo_lbl := _label('CARGO', 9, AMBER); top.add_child(cargo_lbl)
+	_cargo_val = _label('0000', 16, AMBER_BRIGHT); _cargo_val.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT; top.add_child(_cargo_val)
+	vb.add_child(top)
+	var res := HBoxContainer.new(); res.add_theme_constant_override("separation", 10)
+	_res_amber = _label('◉ 0', 11, _kind_color('amber')); _res_obsidian = _label('◉ 0', 11, _kind_color('obsidian')); _res_prism = _label('◉ 0', 11, _kind_color('prism'))
+	res.add_child(_res_amber); res.add_child(_res_obsidian); res.add_child(_res_prism)
+	vb.add_child(res); p.add_child(vb)
 
 func _kind_color(kind: String) -> Color:	match kind:
-		'amber': return Color(0xffe0a3)
-		'obsidian': return Color(0xb0a8f0)
-		_: return Color(0x9fd0ff)
+		'amber': return Color('#ffe0a3')
+		'obsidian': return Color('#b0a8f0')
+		_: return Color('#9fd0ff')
 
 func _label(text: String, size: int, col: Color) -> Label:
 	var l := Label.new()
@@ -129,40 +145,29 @@ func _label(text: String, size: int, col: Color) -> Label:
 	return l
 
 func _add_chamber() -> void:
-	var p := _panel(Vector2(0.5, 0.13), Vector2(-105, 0))
-	p.custom_minimum_size.y = 0
-	p.offset_bottom = 0
-	var r := HBoxContainer.new()
-	r.add_theme_constant_override("separation", 8)
-	_mode_icon = TextureRect.new()
-	_mode_icon.texture = ICONS_RES.fetch('cannon')
-	_mode_icon.custom_minimum_size = Vector2(18, 18)
-	r.add_child(_mode_icon)
-	_chamber_wrap = Control.new()
-	_chamber_wrap.custom_minimum_size = Vector2(90, 18)
-	_chamber_row = HBoxContainer.new()
-	_chamber_row.add_theme_constant_override("separation", 3)
-	_chamber_wrap.add_child(_chamber_row)
+	var p := PanelContainer.new()
+	p.anchor_left = 0.5; p.anchor_top = 0; p.anchor_right = 0.5; p.anchor_bottom = 0
+	p.offset_left = -140; p.offset_top = 16; p.offset_right = 140; p.offset_bottom = 54
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(Color('#1a160f'), 0.85); sb.border_color = Color(Color('#d9a05b'), 0.6)
+	sb.set_border_width_all(1); sb.corner_radius_top_left=4; sb.corner_radius_top_right=4; sb.corner_radius_bottom_left=4; sb.corner_radius_bottom_right=4
+	sb.content_margin_left=8; sb.content_margin_right=8; sb.content_margin_top=6; sb.content_margin_bottom=6
+	p.add_theme_stylebox_override("panel", sb); add_child(p)
+	var r := HBoxContainer.new(); r.add_theme_constant_override("separation", 8); r.alignment = BoxContainer.ALIGNMENT_CENTER
+	_mode_icon = TextureRect.new(); _mode_icon.texture = ICONS_RES.fetch('cannon'); _mode_icon.custom_minimum_size = Vector2(18, 18); r.add_child(_mode_icon)
+	_chamber_wrap = Control.new(); _chamber_wrap.custom_minimum_size = Vector2(96, 18)
+	_chamber_row = HBoxContainer.new(); _chamber_row.add_theme_constant_override("separation", 3); _chamber_wrap.add_child(_chamber_row)
 	for i in GAME.MAX_CHAMBER:
-		var c := ColorRect.new()
-		c.custom_minimum_size = Vector2(14, 14)
-		c.color = _chamber_color(false)
-		_chamber_row.add_child(c)
+		var c := ColorRect.new(); c.custom_minimum_size = Vector2(14, 14); c.color = _chamber_color(false); _chamber_row.add_child(c)
 	r.add_child(_chamber_wrap)
-	_heat_wrap = Control.new()
-	_heat_wrap.visible = false
-	var hv := VBoxContainer.new()
-	hv.alignment = BoxContainer.ALIGNMENT_CENTER
-	_heat_fill = _bar_texture()
-	_heat_fill.custom_minimum_size = Vector2(110, 6)
-	hv.add_child(_heat_fill)
-	_heat_wrap.add_child(hv)
-	_heat_wrap.custom_minimum_size = Vector2(110, 18)
-	r.add_child(_heat_wrap)
+	_heat_wrap = Control.new(); _heat_wrap.visible = false
+	var hv := VBoxContainer.new(); hv.alignment = BoxContainer.ALIGNMENT_CENTER
+	_heat_fill = _bar_texture(); _heat_fill.custom_minimum_size = Vector2(120, 8); hv.add_child(_heat_fill)
+	_heat_wrap.add_child(hv); _heat_wrap.custom_minimum_size = Vector2(120, 18); r.add_child(_heat_wrap)
 	p.add_child(r)
 
 func _chamber_color(loaded: bool) -> Color:
-	return AMBER_BRIGHT if loaded else Color(0x807866, 0.5)
+	return AMBER_BRIGHT if loaded else Color(Color('#807866'), 0.5)
 
 func _add_nav() -> void:
 	_compass = TextureRect.new()
@@ -174,13 +179,13 @@ func _add_nav() -> void:
 	_compass.offset_bottom = 20
 	var img := Image.create(40, 40, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	var amber := Color(0xd9a05b)
+	var amber := Color('#d9a05b')
 	for a in 40:
 		for b in 40:
 			var d := Vector2(a - 20, b - 20)
 			var rr := d.length()
 			if rr >= 5.0 and rr <= 15.0:
-				img.set_pixel(a, b, Color(0xd9a05b, 0.55))
+				img.set_pixel(a, b, Color(Color('#d9a05b'), 0.55))
 			elif rr <= 3.0:
 				img.set_pixel(a, b, amber)
 	_compass.texture = ImageTexture.create_from_image(img)
@@ -195,7 +200,7 @@ func _add_nav() -> void:
 	route.offset_right = 120
 	route.offset_bottom = 32
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0x000000, 0.5)
+	sb.bg_color = Color(Color('#000000'), 0.5)
 	route.add_theme_stylebox_override("panel", sb)
 	_route_fill = TextureRect.new()
 	_route_fill.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -233,7 +238,7 @@ func _add_nav() -> void:
 		for py in 20:
 			var d := Vector2(px - 10, py - 10).length()
 			if d >= 8.0 and d <= 9.0 and px >= 10:
-				timg.set_pixel(px, py, Color(0xffe0a3, 0.9))
+				timg.set_pixel(px, py, Color(Color('#ffe0a3'), 0.9))
 	_turret_status.texture = ImageTexture.create_from_image(timg)
 	_turret_status.modulate.a = 0.0
 	add_child(_turret_status)
@@ -259,7 +264,7 @@ func _add_target() -> void:
 	_target_dot = dot
 	r.add_child(dot)
 	_core_fill = _bar_texture()
-	_core_fill.modulate = Color(0xffe0a3)
+	_core_fill.modulate = Color('#ffe0a3')
 	_core_fill.custom_minimum_size = Vector2(150, 6)
 	r.add_child(_core_fill)
 	p.add_child(r)
@@ -273,19 +278,19 @@ func _add_zone() -> void:
 	_zone_warning.offset_top = -130
 	_zone_warning.offset_bottom = -80
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0x280a0a, 0.8)
-	sb.border_color = Color(0xd8a05b)
+	sb.bg_color = Color(Color('#280a0a'), 0.8)
+	sb.border_color = Color('#d8a05b')
 	sb.set_border_width_all(1)
 	_zone_warning.add_theme_stylebox_override("panel", sb)
 	var vb := VBoxContainer.new()
 	vb.add_theme_constant_override("separation", 4)
-	var l := _label('OUTSIDE MISSION ZONE', 12, Color(0xffb0a0))
+	var l := _label('OUTSIDE MISSION ZONE', 12, Color('#ffb0a0'))
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vb.add_child(l)
 	_zone_bar = TextureRect.new()
 	_zone_bar.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_zone_bar.stretch_mode = TextureRect.STRETCH_SCALE
-	_zone_bar.modulate = Color(0xff8070)
+	_zone_bar.modulate = Color('#ff8070')
 	_zone_bar.texture = _white()
 	_zone_bar.custom_minimum_size = Vector2(0, 4)
 	_zone_bar.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -307,16 +312,16 @@ func _add_boss() -> void:
 	_boss.offset_top = 0
 	_boss.offset_bottom = 30
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0x120f0a, 0.7)
-	sb.border_color = Color(0xd9a05b, 0.6)
+	sb.bg_color = Color(Color('#120f0a'), 0.7)
+	sb.border_color = Color(Color('#d9a05b'), 0.6)
 	sb.set_border_width_all(1)
 	_boss.add_theme_stylebox_override("panel", sb)
 	var r := HBoxContainer.new()
 	r.add_theme_constant_override("separation", 10)
-	_boss_code = _label('---', 11, Color(0xffe0a3))
+	_boss_code = _label('---', 11, Color('#ffe0a3'))
 	r.add_child(_boss_code)
 	_boss_hp = _bar_texture()
-	_boss_hp.modulate = Color(0xffe0a3)
+	_boss_hp.modulate = Color('#ffe0a3')
 	_boss_hp.custom_minimum_size = Vector2(180, 6)
 	r.add_child(_boss_hp)
 	_boss.add_child(r)
@@ -338,15 +343,15 @@ func _process(_delta: float) -> void:
 	var amber := floori(GAME.inventory['amber'])
 	if amber != _last_amber:
 		_last_amber = amber
-		_res_amber.text = str(amber)
+		_res_amber.text = '◉ %d' % amber
 	var obsidian := floori(GAME.inventory['obsidian'])
 	if obsidian != _last_obsidian:
 		_last_obsidian = obsidian
-		_res_obsidian.text = str(obsidian)
+		_res_obsidian.text = '◉ %d' % obsidian
 	var prism := floori(GAME.inventory['prism'])
 	if prism != _last_prism:
 		_last_prism = prism
-		_res_prism.text = str(prism)
+		_res_prism.text = '◉ %d' % prism
 	var loaded := clampi(player.chamber, 0, GAME.MAX_CHAMBER)
 	if loaded != _last_loaded:
 		_last_loaded = loaded
@@ -387,7 +392,7 @@ func _process(_delta: float) -> void:
 		_target_dot.modulate = _dot_color(monolith, hf)
 		_core_fill.custom_minimum_size.x = 150.0 * hf
 	else:
-		_target_dot.modulate = Color(0x807866)
+		_target_dot.modulate = Color('#807866')
 		_core_fill.custom_minimum_size.x = 0.0
 	if monolith and monolith.is_active():
 		_boss.visible = true
@@ -401,7 +406,7 @@ func _dot_color(monolith: Node, hf: float) -> Color:
 		var zz: Node = world.engaged_boss_zone()
 		if zz == monolith.get_parent():
 			return Color(1.0, 0.35, 0.2) if hf > 0.66 else Color(1.0, 0.75, 0.2)
-	return Color(0xd9a05b)
+	return Color('#d9a05b')
 
 func set_compass(angle: float) -> void:
 	_compass.rotation = deg_to_rad(angle)
@@ -412,15 +417,15 @@ func set_route_fill(frac: float) -> void:
 func set_target_dot(state: String) -> void:
 	match state:
 		'docked':
-			_target_dot.modulate = Color(0x807866, 0.3)
+			_target_dot.modulate = Color(Color('#807866'), 0.3)
 		'dormant':
-			_target_dot.modulate = Color(0xd9a05b)
+			_target_dot.modulate = Color('#d9a05b')
 		'engage':
 			_target_dot.modulate = Color(1.0, 0.35, 0.2)
 		'frag':
 			_target_dot.modulate = Color(1.0, 0.75, 0.2)
 		_:
-			_target_dot.modulate = Color(0x807866)
+			_target_dot.modulate = Color('#807866')
 
 func set_dock_prompt(vis: bool) -> void:
 	_dock_prompt.visible = vis

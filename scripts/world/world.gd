@@ -9,18 +9,8 @@ const OUTPOST = preload("res://scripts/world/outpost.gd")
 const MINING_NODE = preload("res://scripts/world/mining_node.gd")
 const BOSS_ZONE = preload("res://scripts/world/boss.gd")
 const PROJECTILE_MGR = preload("res://scripts/world/projectile_mgr.gd")
-
-const WORLD_SIZE := 2600
-const SEG := 300
-
-var sky_peace := Color(0xb5aea0)
-var sky_combat := Color(0x1a1916)
-var fog_near_peace := 70.0
-var fog_far_peace := 520.0
-var fog_near_combat := 30.0
-var fog_far_combat := 320.0
-var sun_color_peace := Color(0xf5e9ce)
-var sun_color_combat := Color(0x1a1916)
+const TERRAIN_LAYER = preload("res://scripts/world/terrain_mesh.gd")
+const WORLD_ENV = preload("res://scripts/world/world_env.gd")
 
 var outpost_colliders: Array = []
 var rock_colliders: Array = []
@@ -34,17 +24,23 @@ var player: Node
 var fx: Node
 var hud: Node
 
-var _env: Environment
-var _sun: DirectionalLight3D
-var _scar: MeshInstance3D
-var _scar_material: StandardMaterial3D
-var _scar_radius := 0.0
-var _scar_target := 0.0
+var terrain_layer: Node
+var env_layer: Node
 
 func _ready() -> void:
-	_build_terrain()
-	_build_environment()
-	_build_scar()
+	if has_node("EditorPreview"):
+		get_node("EditorPreview").queue_free()
+	terrain_layer = TERRAIN_LAYER.new()
+	terrain_layer.name = "Terrain"
+	add_child(terrain_layer)
+	env_layer = WORLD_ENV.new()
+	env_layer.name = "Environment"
+	add_child(env_layer)
+	env_layer.setup(self)
+	# ponytail: spawns diferidos 1 frame para que _ready no bloquee nunca (260 heights ≈20ms)
+	call_deferred("_spawn_all")
+
+func _spawn_all() -> void:
 	spawn_rocks()
 	_build_corridor()
 	spawn_outposts()
@@ -56,109 +52,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	_update_zones(delta)
-	projectile_mgr.process_step(delta)
+	if projectile_mgr:
+		projectile_mgr.process_step(delta)
 	for n in mining_nodes:
 		n.update_node(delta)
-	_update_environment(delta)
+	if env_layer:
+		env_layer.update_env(delta, monolith)
 	_update_settlement_proximity()
-
-# ---- terrain geometry -------------------------------------------------------
-
-func _build_terrain() -> void:
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	st.set_smooth_group(-1)
-	var step := WORLD_SIZE / float(SEG)
-	var half := WORLD_SIZE * 0.5
-	var n: int = SEG + 1
-	var h_arr := PackedFloat32Array()
-	h_arr.resize(n * n)
-	for z in n:
-		for x in n:
-			var wx := -half + x * step
-			var wz := -half + z * step
-			h_arr[z * n + x] = TERRAIN.get_effective_ground_height(wx, wz)
-	for z in n:
-		for x in n:
-			var wx := -half + x * step
-			var wz := -half + z * step
-			var h: float = h_arr[z * n + x]
-			var b := clampf(TERRAIN.biome_field(wx, wz), 0.0, TERRAIN.BIOMES.size() - 0.001)
-			var idx := int(floor(b))
-			var frac := TERRAIN.smooth(b - idx)
-			var c1: Color = TERRAIN.BIOMES[idx]['base']
-			var c2: Color = TERRAIN.BIOMES[mini(idx + 1, TERRAIN.BIOMES.size() - 1)]['base']
-			var col := c1.lerp(c2, frac)
-			var speck := 0.92 + TERRAIN.value_noise2(wx * 0.15, wz * 0.15, 555) * 0.16
-			if h > 12.0:
-				col = col.lerp(TERRAIN.BIOMES[4]['alt'], minf(1.0, (h - 12.0) / 14.0))
-			col = Color(col.r * speck, col.g * speck, col.b * speck)
-			var nx := h_arr[maxi(z - 1, 0) * n + x] - h_arr[mini(z + 1, n - 1) * n + x]
-			var nz := h_arr[z * n + maxi(x - 1, 0)] - h_arr[z * n + mini(x + 1, n - 1)]
-			st.set_normal(Vector3(nx, 2.0 * step, nz).normalized())
-			st.set_color(col)
-			st.add_vertex(Vector3(wx, h, wz))
-	for z in SEG:
-		for x in SEG:
-			var i0 := z * n + x
-			var i1 := i0 + 1
-			var i2 := i0 + n
-			var i3 := i0 + n + 1
-			st.add_index(i0)
-			st.add_index(i2)
-			st.add_index(i1)
-			st.add_index(i1)
-			st.add_index(i2)
-			st.add_index(i3)
-	var mesh := st.commit()
-	var mat := StandardMaterial3D.new()
-	mat.vertex_color_use_as_albedo = true
-	mat.roughness = 0.92
-	mesh.surface_set_material(0, mat)
-	var mi := MeshInstance3D.new()
-	mi.mesh = mesh
-	add_child(mi)
-
-func _build_environment() -> void:
-	_env = Environment.new()
-	_env.background_mode = Environment.BG_COLOR
-	_env.background_color = sky_peace
-	_env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	_env.ambient_light_color = Color(0xd9d3bf)
-	_env.ambient_light_energy = 1.05
-	_env.fog_enabled = true
-	_env.fog_mode = Environment.FOG_MODE_DEPTH
-	_env.fog_light_color = sky_peace
-	_env.fog_depth_begin = fog_near_peace
-	_env.fog_depth_end = fog_far_peace
-	_env.glow_enabled = true
-	_env.glow_intensity = 0.35
-	var we := WorldEnvironment.new()
-	we.environment = _env
-	add_child(we)
-	_sun = DirectionalLight3D.new()
-	_sun.light_color = sun_color_peace
-	_sun.light_energy = 0.95
-	_sun.rotation_degrees = Vector3(-57.0, 20.0, 0.0)
-	_sun.shadow_enabled = true
-	add_child(_sun)
-
-func _build_scar() -> void:
-	_scar_material = StandardMaterial3D.new()
-	_scar_material.albedo_color = Color(0x12100d)
-	_scar_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	_scar_material.albedo_color.a = 0.0
-	_scar_material.roughness = 1.0
-	_scar = MeshInstance3D.new()
-	_scar.mesh = PRIMITIVES.ring_mesh(Vector3.ZERO, 0.0001, 1.0, 0.0, 36, Color(0x12100d))
-	_scar.mesh.surface_set_material(0, _scar_material)
-	_scar.rotation.x = -PI / 2
-	_scar.position.y = 0.05
-	add_child(_scar)
 
 func spawn_rocks() -> void:
 	var rock_mat := StandardMaterial3D.new()
-	rock_mat.albedo_color = Color(0x48443b)
+	rock_mat.albedo_color = Color('#48443b')
 	rock_mat.roughness = 0.9
 	for i in 170:
 		var x := (randf() - 0.5) * 1900.0
@@ -171,7 +75,7 @@ func spawn_rocks() -> void:
 			continue
 		var scl := 1.4 + randf() * 3.2
 		var mi := MeshInstance3D.new()
-		mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-scl, -scl, -scl), 'max': Vector3(scl, scl, scl), 'color': Color(0x48443b) }])
+		mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-scl, -scl, -scl), 'max': Vector3(scl, scl, scl), 'color': Color('#48443b') }])
 		mi.mesh.surface_set_material(0, rock_mat)
 		mi.position = Vector3(x, TERRAIN.get_effective_ground_height(x, z) + scl * 0.4, z)
 		mi.rotation = Vector3(randf() * 2.0, randf() * 2.0, randf() * 2.0)
@@ -184,7 +88,7 @@ func _build_corridor() -> void:
 	var px := -r.z / r_len
 	var pz := r.x / r_len
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0xd9a05b)
+	mat.albedo_color = Color('#d9a05b')
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.albedo_color.a = 0.22
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -194,7 +98,7 @@ func _build_corridor() -> void:
 			var x: float = float(TERRAIN.MISSION['start']['x']) + r.x * f + px * side * TERRAIN.MISSION['halfWidth']
 			var z: float = float(TERRAIN.MISSION['start']['z']) + r.z * f + pz * side * TERRAIN.MISSION['halfWidth']
 			var mi := MeshInstance3D.new()
-			mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-1.2, 0, -0.3), 'max': Vector3(1.2, 0.3, 0.3), 'color': Color(0xd9a05b) }])
+			mi.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-1.2, 0, -0.3), 'max': Vector3(1.2, 0.3, 0.3), 'color': Color('#d9a05b') }])
 			mi.mesh.surface_set_material(0, mat)
 			mi.position = Vector3(x, TERRAIN.get_effective_ground_height(x, z) + 0.35, z)
 			mi.rotation.y = atan2(r.x, r.z)
@@ -276,21 +180,6 @@ func focused_monolith() -> Node:
 				bd = d
 				best = mn
 	return best
-
-func _update_environment(delta: float) -> void:
-	var in_combat: bool = monolith != null and monolith.is_active() and monolith.get_parent().engaged()
-	var target_sky: Color = sky_combat if in_combat else sky_peace
-	_env.background_color = _env.background_color.lerp(target_sky, delta * 0.8)
-	_env.fog_light_color = _env.fog_light_color.lerp(target_sky, delta * 0.8)
-	_env.fog_depth_begin = lerpf(_env.fog_depth_begin, fog_near_combat if in_combat else fog_near_peace, delta * 0.8)
-	_env.fog_depth_end = lerpf(_env.fog_depth_end, fog_far_combat if in_combat else fog_far_peace, delta * 0.8)
-	_sun.light_color = _sun.light_color.lerp(sun_color_combat if in_combat else sun_color_peace, delta * 0.8)
-	_scar_target = TERRAIN.BOSS['grid']['y'] * TERRAIN.BOSS['cellSize'] * 2.1 if (in_combat and monolith) else 0.0
-	_scar_radius = lerpf(_scar_radius, _scar_target, delta * 1.2)
-	if in_combat and monolith:
-		_scar.position = Vector3(monolith.position.x, TERRAIN.get_effective_ground_height(monolith.position.x, monolith.position.z) + 0.05, monolith.position.z)
-	_scar.scale = Vector3(maxf(0.001, _scar_radius), 1.0, maxf(0.001, _scar_radius))
-	_scar_material.albedo_color.a = minf(0.65, _scar_radius / maxf(_scar_target, 0.001) * 0.65)
 
 func _update_settlement_proximity() -> void:
 	var best := -1

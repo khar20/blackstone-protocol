@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Blackstone Protocol"
 run/main_scene="uid://75jy677nqy2h"
-config/features=PackedStringArray("4.7", "Forward Plus")
+config/features=PackedStringArray("4.4", "Forward Plus")
 
 [autoload]
 

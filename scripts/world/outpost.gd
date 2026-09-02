@@ -4,10 +4,10 @@ extends Node3D
 
 const PRIMITIVES = preload("res://scripts/world/primitives.gd")
 
-const CONCRETE := Color(0x8a847a)
-const DARK_STEEL := Color(0x24221f)
-const AMBER := Color(0xd9a05b)
-const HOLO := Color(0x5ea89e)
+const CONCRETE := Color('#8a847a')
+const DARK_STEEL := Color('#24221f')
+const AMBER := Color('#d9a05b')
+const HOLO := Color('#5ea89e')
 
 var settlement_name: String
 var s_type: String

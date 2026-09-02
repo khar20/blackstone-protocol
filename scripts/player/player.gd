@@ -50,27 +50,29 @@ var _ring_mat: StandardMaterial3D
 var _mining_ui := false
 
 func _ready() -> void:
+	if has_node("EditorPreview"):
+		get_node("EditorPreview").queue_free()
 	tank = TANK_MODEL.new()
 	add_child(tank)
 	_build_mining_fx()
 
 func _build_mining_fx() -> void:
 	_beam_mat = StandardMaterial3D.new()
-	_beam_mat.albedo_color = Color(0xd9a05b)
+	_beam_mat.albedo_color = Color('#d9a05b')
 	_beam_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_beam_mat.albedo_color.a = 0.55
 	_beam_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_beam = MeshInstance3D.new()
-	_beam.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-0.03, -0.03, 0), 'max': Vector3(0.03, 0.03, 1), 'color': Color(0xd9a05b) }])
+	_beam.mesh = PRIMITIVES.box_mesh([{ 'min': Vector3(-0.03, -0.03, 0), 'max': Vector3(0.03, 0.03, 1), 'color': Color('#d9a05b') }])
 	_beam.visible = false
 	add_child(_beam)
 	_ring_mat = StandardMaterial3D.new()
-	_ring_mat.albedo_color = Color(0xd9a05b)
+	_ring_mat.albedo_color = Color('#d9a05b')
 	_ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_ring_mat.albedo_color.a = 0.3
 	_ring_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_mining_ring = MeshInstance3D.new()
-	_mining_ring.mesh = PRIMITIVES.ring_mesh(Vector3.ZERO, MAX_MINING_RANGE - 0.2, MAX_MINING_RANGE, 0.0, 48, Color(0xd9a05b))
+	_mining_ring.mesh = PRIMITIVES.ring_mesh(Vector3.ZERO, MAX_MINING_RANGE - 0.2, MAX_MINING_RANGE, 0.0, 48, Color('#d9a05b'))
 	_mining_ring.mesh.surface_set_material(0, _ring_mat)
 	_mining_ring.rotation.x = -PI / 2
 	_mining_ring.visible = false
@@ -214,7 +216,8 @@ func fire_main_cannon() -> void:
 		return
 	chamber -= 1
 	var muzzle_world: Vector3 = tank.barrel_tip.global_position
-	var dir: Vector3 = -tank.gun_pitch.global_transform.basis.z
+	# ponytail: barrel mesh se extiende en +Z local (0.4→3.0), la direccion es +Z no -Z (antes disparaba hacia atrás)
+	var dir: Vector3 = tank.gun_pitch.global_transform.basis.z
 	world.projectile_mgr.fire_shell(muzzle_world, dir * SHELL_SPEED)
 	tank.muzzle_light.light_energy = 6.0
 	var hull_fwd := Vector3(sin(hull_yaw), 0.0, cos(hull_yaw))
@@ -312,7 +315,7 @@ func _update_mining(delta: float) -> void:
 			continue
 		var to_node: Vector3 = (node.position - camera.global_position).normalized()
 		var cam_dir: Vector3 = -camera.global_transform.basis.z
-		if to_node.dot(cam_dir) > 0.94 and d < closest_dist:
+		if to_node.dot(cam_dir) > 0.88 and d < closest_dist: # ponytail: 0.94 era demasiado estricto
 			closest = node
 			closest_dist = d
 
