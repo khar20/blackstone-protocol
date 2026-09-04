@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1dialg0001"]
+
+[ext_resource type="Script" uid="uid://dlef2kvfdiiay" path="res://scripts/ui/dialogue.gd" id="1_dialogue"]
+
+[sub_resource type="StyleBoxFlat" id="sb_panel"]
+bg_color = Color(0.102, 0.086, 0.059, 0.92)
+border_color = Color(0.851, 0.627, 0.357, 0.65)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 16.0
+content_margin_right = 16.0
+content_margin_top = 14.0
+content_margin_bottom = 14.0
+
+[node name="Dialogue" type="CanvasLayer"]
+layer = 21
+visible = false
+script = ExtResource("1_dialogue")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -360.0
+offset_top = -160.0
+offset_right = 360.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_panel")
+
+[node name="VB" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="Panel/VB"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+autowrap_mode = 3
+
+[node name="Body" type="Label" parent="Panel/VB"]
+custom_minimum_size = Vector2(680, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+autowrap_mode = 3
+
+[node name="Hint" type="Label" parent="Panel/VB"]
+visible = false
+layout_mode = 2
+text = "[ E ]  CONTINUAR  ·  CLICK"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)

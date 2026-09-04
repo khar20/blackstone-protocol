@@ -9,10 +9,16 @@ const SEG := 140 # ponytail: 200→140 ≈20k verts (vs 40k) → 1.9s total, NUN
 signal terrain_ready
 
 var _built := false
+var _th: Thread
 
 func _ready() -> void:
 	# No construir sincronamente: deja que el menu/title pinte primero
 	call_deferred("build")
+
+func _exit_tree() -> void:
+	# Si cerramos mientras el thread construye, esperar para no liberar arrays en uso
+	if _th and _th.is_alive():
+		_th.wait_to_finish()
 
 var _h_arr: PackedFloat32Array
 var _verts: PackedVector3Array
@@ -61,11 +67,11 @@ func build() -> void:
 	_norms = PackedVector3Array(); _norms.resize(n * n)
 	for o in TERRAIN.OUTPOST_COORDS:
 		TERRAIN.get_effective_ground_height(float(o['x']), float(o['z']))
-	var th := Thread.new()
-	th.start(_thread_prepare.bind(n, step, half))
-	while th.is_alive():
+	_th = Thread.new()
+	_th.start(_thread_prepare.bind(n, step, half))
+	while _th.is_alive():
 		await get_tree().process_frame
-	th.wait_to_finish()
+	_th.wait_to_finish()
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	st.set_smooth_group(-1)

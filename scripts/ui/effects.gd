@@ -25,93 +25,28 @@ var _reticle: Control
 var _reload_frac := -1.0
 var _in_sweet := false
 var _mining_frac := 0.0
-var _cannon_circle: Control
+var _cannon_circle: TextureRect
 var _center_box: PanelContainer
-var _center_title: Label
-var _center_sub: Label
-var _center_hint: Label
+@onready var _center_title: Label = $CenterBox/VB/Title
+@onready var _center_sub: Label = $CenterBox/VB/Sub
+@onready var _center_hint: Label = $CenterBox/VB/Hint
 
 func _ready() -> void:
-	_build()
-
-func _build() -> void:
-	_banner = Label.new()
-	_banner.add_theme_font_size_override("font_size", 16)
-	_banner.add_theme_color_override("font_color", AMBER_BRIGHT)
-	_banner.add_theme_constant_override("outline_size", 4)
-	_banner.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-	_banner.modulate.a = 0.0
-	_banner.anchor_left = 0.5
-	_banner.anchor_right = 0.5
-	_banner.anchor_top = 0.5
-	_banner.anchor_bottom = 0.5
-	_banner.offset_left = -300
-	_banner.offset_right = 300
-	_banner.offset_top = -140
-	_banner.offset_bottom = -110
-	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	add_child(_banner)
-
-	_flash = ColorRect.new()
-	_flash.anchor_right = 1.0
-	_flash.anchor_bottom = 1.0
-	_flash.color = Color(1, 0.9, 0.7, 0.0)
-	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_flash)
-
-	_hitmarker = _make_cross()
-	add_child(_hitmarker)
-
-	_reticle = _make_reticle()
-	add_child(_reticle)
-	_cannon_circle = _make_ring()
-	add_child(_cannon_circle)
-
-	_center_box = PanelContainer.new()
-	_center_box.anchor_left = 0.5
-	_center_box.anchor_right = 0.5
-	_center_box.anchor_top = 0.5
-	_center_box.anchor_bottom = 0.5
-	_center_box.offset_left = -220
-	_center_box.offset_right = 220
-	_center_box.offset_top = -90
-	_center_box.offset_bottom = 10
-	_center_box.visible = false
-	var vb := VBoxContainer.new()
-	vb.add_theme_constant_override("separation", 8)
-	_center_title = Label.new()
-	_center_title.add_theme_font_size_override("font_size", 18)
-	_center_title.add_theme_color_override("font_color", AMBER_BRIGHT)
-	_center_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_center_sub = Label.new()
-	_center_sub.add_theme_font_size_override("font_size", 12)
-	_center_sub.add_theme_color_override("font_color", BEIGE)
-	_center_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_center_hint = Label.new()
-	_center_hint.add_theme_font_size_override("font_size", 10)
-	_center_hint.add_theme_color_override("font_color", AMBER)
-	_center_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vb.add_child(_center_title)
-	vb.add_child(_center_sub)
-	vb.add_child(_center_hint)
-	_center_box.add_child(vb)
-	add_child(_center_box)
-	_center_box.gui_input.connect(func(ev: InputEvent) -> void:
+	_banner = $Banner
+	_flash = $Flash
+	_hitmarker = $Hitmarker
+	_reticle = $Reticle
+	_cannon_circle = $CannonCircle
+	_center_box = $CenterBox
+	_hitmarker.texture = _cross_texture()
+	_cannon_circle.texture = _ring_texture()
+	$Reticle.draw.connect(func() -> void: _draw_reticle($Reticle))
+	$CenterBox.gui_input.connect(func(ev: InputEvent) -> void:
 		if _center_box.visible and ev is InputEventMouseButton and ev.pressed and ev.button_index == MOUSE_BUTTON_LEFT:
 			if menus:
 				menus.redeploy())
 
-func _make_cross() -> TextureRect:
-	var tx := TextureRect.new()
-	tx.anchor_left = 0.5
-	tx.anchor_right = 0.5
-	tx.anchor_top = 0.5
-	tx.anchor_bottom = 0.5
-	tx.offset_left = -7
-	tx.offset_right = 7
-	tx.offset_top = -7
-	tx.offset_bottom = 7
-	tx.modulate.a = 0.0
+func _cross_texture() -> Texture2D:
 	var img := Image.create(14, 14, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	for i in 5:
@@ -119,30 +54,9 @@ func _make_cross() -> TextureRect:
 	img.set_pixel(7, 7, AMBER_BRIGHT)
 	for i in 5:
 		img.set_pixel(1 + i * 2, 7, AMBER_BRIGHT)
-	tx.texture = ImageTexture.create_from_image(img)
-	return tx
+	return ImageTexture.create_from_image(img)
 
-func _make_reticle() -> Control:
-	var r := Control.new()
-	r.anchor_left = 0.5
-	r.anchor_right = 0.5
-	r.anchor_top = 0.5
-	r.anchor_bottom = 0.5
-	r.offset_left = -22
-	r.offset_right = 22
-	r.offset_top = -22
-	r.offset_bottom = 22
-	r.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	r.draw.connect(func() -> void: _draw_reticle(r))
-	return r
-
-func _make_ring() -> TextureRect:
-	var tx := TextureRect.new()
-	tx.offset_left = -16
-	tx.offset_right = 16
-	tx.offset_top = -16
-	tx.offset_bottom = 16
-	tx.mouse_filter = Control.MOUSE_FILTER_IGNORE
+func _ring_texture() -> Texture2D:
 	var img := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
 	for y in 32:
@@ -150,8 +64,7 @@ func _make_ring() -> TextureRect:
 			var d := Vector2(x - 16, y - 16).length()
 			if d >= 12.0 and d <= 15.0:
 				img.set_pixel(x, y, Color(Color('#ffe0a3'), 0.8))
-	tx.texture = ImageTexture.create_from_image(img)
-	return tx
+	return ImageTexture.create_from_image(img)
 
 func _draw_reticle(r: Control) -> void:
 	var c := Vector2(22, 22)

@@ -1,0 +1,370 @@
+[gd_scene load_steps=7 format=3 uid="uid://b1menu0001"]
+
+[ext_resource type="Script" uid="uid://vbpik7so0hfj" path="res://scripts/ui/menus.gd" id="1_menus"]
+
+[sub_resource type="StyleBoxFlat" id="sb_screen"]
+bg_color = Color(0.055, 0.047, 0.039, 0.88)
+content_margin_left = 24.0
+content_margin_right = 24.0
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_normal"]
+bg_color = Color(0.102, 0.086, 0.059, 0.9)
+border_color = Color(0.851, 0.627, 0.357, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_hover"]
+bg_color = Color(0.851, 0.627, 0.357, 0.22)
+border_color = Color(1, 0.878, 0.639, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_btn_pressed"]
+bg_color = Color(0.851, 0.627, 0.357, 0.35)
+border_color = Color(0.851, 0.627, 0.357, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_left = 4
+corner_radius_bottom_right = 4
+content_margin_left = 12.0
+content_margin_right = 12.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_controls"]
+bg_color = Color(0.055, 0.047, 0.039, 0.92)
+content_margin_left = 24.0
+content_margin_right = 24.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+
+[node name="Menus" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_menus")
+
+[node name="Title" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+theme_override_styles/panel = SubResource("sb_screen")
+
+[node name="VB" type="VBoxContainer" parent="Title"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 24
+
+[node name="Emblem" type="TextureRect" parent="Title/VB"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="Title/VB"]
+layout_mode = 2
+text = "BLACKSTONE PROTOCOL"
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+horizontal_alignment = 1
+
+[node name="Nav" type="VBoxContainer" parent="Title/VB"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+
+[node name="DeployBtn" type="Button" parent="Title/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "DEPLOY"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="ControlsBtn" type="Button" parent="Title/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "CONTROLS"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="ResetBtn" type="Button" parent="Title/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "RESET"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="Pause" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+theme_override_styles/panel = SubResource("sb_screen")
+
+[node name="VB" type="VBoxContainer" parent="Pause"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 24
+
+[node name="PauseLabel" type="Label" parent="Pause/VB"]
+layout_mode = 2
+text = "SYSTEM PAUSED"
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+horizontal_alignment = 1
+
+[node name="Nav" type="VBoxContainer" parent="Pause/VB"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 6
+
+[node name="ResumeBtn" type="Button" parent="Pause/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "RESUME"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="ControlsBtn" type="Button" parent="Pause/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "CONTROLS"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="AbortBtn" type="Button" parent="Pause/VB/Nav"]
+custom_minimum_size = Vector2(300, 42)
+layout_mode = 2
+focus_mode = 0
+text = "ABORT"
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_btn_normal")
+theme_override_styles/hover = SubResource("sb_btn_hover")
+theme_override_styles/pressed = SubResource("sb_btn_pressed")
+
+[node name="Controls" type="PanelContainer" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -180.0
+offset_right = 300.0
+offset_bottom = 180.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme_override_styles/panel = SubResource("sb_controls")
+
+[node name="VB" type="VBoxContainer" parent="Controls"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="Controls/VB"]
+layout_mode = 2
+text = "FIELD CONTROLS"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+horizontal_alignment = 1
+
+[node name="Row_move" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_move"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "W / A / S / D"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_move"]
+layout_mode = 2
+text = "DRIVE · STEER"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_drift" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_drift"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "SPACE"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_drift"]
+layout_mode = 2
+text = "DRIFT-BRAKE"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_mouse" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_mouse"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "MOUSE"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_mouse"]
+layout_mode = 2
+text = "LOOK · HOLD LMB FIRE · RMB OPTIC"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_e" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_e"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "E"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_e"]
+layout_mode = 2
+text = "DOCK / DEPART TERMINAL"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_f" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_f"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "F"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_f"]
+layout_mode = 2
+text = "HOLD TO MINE"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_r" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_r"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "R"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_r"]
+layout_mode = 2
+text = "RELOAD / SWEET-SPOT"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_v" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_v"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "V"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_v"]
+layout_mode = 2
+text = "TOGGLE VIEW"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_cycle" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_cycle"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "TAB / WHEEL"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_cycle"]
+layout_mode = 2
+text = "CYCLE WEAPON"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)
+
+[node name="Row_esc" type="HBoxContainer" parent="Controls/VB"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="K" type="Label" parent="Controls/VB/Row_esc"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "ESC"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.851, 0.627, 0.357, 1)
+horizontal_alignment = 2
+
+[node name="D" type="Label" parent="Controls/VB/Row_esc"]
+layout_mode = 2
+text = "PAUSE"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.863, 0.835, 0.773, 1)

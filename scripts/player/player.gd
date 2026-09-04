@@ -4,7 +4,6 @@ extends Node3D
 ## fireMainCannon / updateTurretFire / handleReloadPress from sample.html.
 ## No physics bodies; the world owns collider tables.
 
-const TANK_MODEL = preload("res://scripts/player/tank_model.gd")
 const PRIMITIVES = preload("res://scripts/world/primitives.gd")
 
 const WORLD_BOUND := 1250.0
@@ -19,7 +18,7 @@ var fx: Node
 var hud: Node
 var garage: Node
 
-var tank: Node3D
+@onready var tank: Node3D = $tank
 var alive := true
 var vel := Vector3.ZERO
 var hull_yaw := 0.0
@@ -52,8 +51,6 @@ var _mining_ui := false
 func _ready() -> void:
 	if has_node("EditorPreview"):
 		get_node("EditorPreview").queue_free()
-	tank = TANK_MODEL.new()
-	add_child(tank)
 	_build_mining_fx()
 
 func _build_mining_fx() -> void:

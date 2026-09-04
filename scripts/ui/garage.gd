@@ -23,24 +23,11 @@ var _items: Array = []
 var _index := 0
 
 func _ready() -> void:
-	_build()
-
-func _build() -> void:
-	_panel = PanelContainer.new()
-	_panel.anchor_left = 0.5; _panel.anchor_right = 0.5; _panel.anchor_top = 0.5; _panel.anchor_bottom = 0.5
-	_panel.offset_left = -280; _panel.offset_right = 280; _panel.offset_top = -250; _panel.offset_bottom = 250
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(Color('#1a160f'), 0.92); sb.border_color = Color(Color('#d9a05b'), 0.7)
-	sb.set_border_width_all(1); sb.corner_radius_top_left=6; sb.corner_radius_top_right=6; sb.corner_radius_bottom_left=6; sb.corner_radius_bottom_right=6
-	sb.content_margin_left=14; sb.content_margin_right=14; sb.content_margin_top=12; sb.content_margin_bottom=12
-	_panel.add_theme_stylebox_override("panel", sb)
-	var vb := VBoxContainer.new(); vb.add_theme_constant_override("separation", 10)
-	_title = Label.new(); _title.add_theme_font_size_override("font_size", 15); _title.add_theme_color_override("font_color", Color('#ffe0a3')); _title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_cargo = Label.new(); _cargo.add_theme_font_size_override("font_size", 14); _cargo.add_theme_color_override("font_color", Color('#ffe0a3')); _cargo.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_rows = VBoxContainer.new(); _rows.add_theme_constant_override("separation", 2)
-	var scroll := ScrollContainer.new(); scroll.custom_minimum_size = Vector2(500, 380); scroll.add_child(_rows)
-	vb.add_child(_title); vb.add_child(_cargo); vb.add_child(scroll)
-	_panel.add_child(vb); add_child(_panel); CRT_RES.attach(_panel); visible = false
+	_panel = $Panel
+	_title = $Panel/VB/Title
+	_cargo = $Panel/VB/Cargo
+	_rows = $Panel/VB/Scroll/Rows
+	CRT_RES.attach(_panel)
 
 func open(_from_mission: bool = false) -> void:
 	if not player:

@@ -149,9 +149,9 @@ func _near_outpost(p: Vector2) -> bool:
 func spawn_boss_zones() -> void:
 	var r: Vector3 = TERRAIN.mission_route()
 	var ang := atan2(r.z, r.x) + PI / 2.0
-	var spots := [0.35, 0.7]
+	var spots := [0.08, 0.15]
 	for i in spots.size():
-		var off: float = (1.0 if i == 0 else -1.0) * (70.0 + randf() * 90.0)
+		var off: float = (1.0 if i == 0 else -1.0) * 150.0
 		var cx: float = float(TERRAIN.MISSION['start']['x']) + r.x * spots[i] + cos(ang) * off
 		var cz: float = float(TERRAIN.MISSION['start']['z']) + r.z * spots[i] + sin(ang) * off
 		var z := BOSS_ZONE.new()

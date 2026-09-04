@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1garage001"]
+
+[ext_resource type="Script" uid="uid://bdhsadmnfbguw" path="res://scripts/ui/garage.gd" id="1_garage"]
+
+[sub_resource type="StyleBoxFlat" id="sb_panel"]
+bg_color = Color(0.102, 0.086, 0.059, 0.92)
+border_color = Color(0.851, 0.627, 0.357, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+content_margin_left = 14.0
+content_margin_right = 14.0
+content_margin_top = 12.0
+content_margin_bottom = 12.0
+
+[node name="Garage" type="CanvasLayer"]
+layer = 12
+visible = false
+script = ExtResource("1_garage")
+
+[node name="Panel" type="PanelContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -250.0
+offset_right = 280.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("sb_panel")
+
+[node name="VB" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VB"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+horizontal_alignment = 1
+
+[node name="Cargo" type="Label" parent="Panel/VB"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(1, 0.878, 0.639, 1)
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/VB"]
+custom_minimum_size = Vector2(500, 380)
+layout_mode = 2
+
+[node name="Rows" type="VBoxContainer" parent="Panel/VB/Scroll"]
+layout_mode = 2
+theme_override_constants/separation = 2

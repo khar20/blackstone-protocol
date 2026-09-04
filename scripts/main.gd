@@ -15,6 +15,8 @@ var menus: Node
 var _loading: CanvasLayer
 var _load_start := 0
 
+const LOADING_SCENE = preload("res://scenes/ui/loading_overlay.tscn")
+
 func _ready() -> void:
 	world = $World
 	player = $Player
@@ -39,24 +41,8 @@ func _ready() -> void:
 	menus.show_initial()
 
 func _build_loading() -> void:
-	_loading = CanvasLayer.new()
-	_loading.layer = 15 # por debajo de Menus(20)/Dialogue(21) para no tapar menu
+	_loading = LOADING_SCENE.instantiate()
 	_loading.name = "LoadingOverlay"
-	var bg := ColorRect.new()
-	bg.color = Color(Color('#0e0c0a'), 0.78)
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_loading.add_child(bg)
-	var lbl := Label.new()
-	lbl.name = "Label"
-	lbl.text = "GENERANDO TERRENO · 0%"
-	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
-	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lbl.add_theme_font_size_override("font_size", 18)
-	lbl.add_theme_color_override("font_color", Color('#ffe0a3'))
-	_loading.add_child(lbl)
 	add_child(_loading)
 	# si estamos en TITLE, el menu tapa el loading; ocultarlo hasta PLAYING
 	if GAME.state == 'TITLE':
